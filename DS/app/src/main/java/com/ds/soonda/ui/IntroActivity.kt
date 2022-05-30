@@ -35,7 +35,7 @@ class IntroActivity : AppCompatActivity() {
         }
         App.uuid = uuid
 
-        // 앱 구동 후 현재 서버 state 상태 확인
+        // 앱 구동 후 현재 서버 state 상태 확인.
         reqAdData(uuid, "N")
     }
 
