@@ -1,14 +1,24 @@
 package com.ds.soonda.ui
 
+import android.Manifest
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.ds.soonda.application.App
 import com.ds.soonda.databinding.ActivityIntroBinding
 import com.ds.soonda.model.Ad
 import com.ds.soonda.model.AdInfoDto
 import com.ds.soonda.repository.ServerRepository
+import com.ds.soonda.util.PermissionUtil
 import com.ds.soonda.util.Utils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -22,11 +32,71 @@ import kotlinx.coroutines.launch
 class IntroActivity : AppCompatActivity() {
     private lateinit var binder: ActivityIntroBinding
 
+    private val REQUEST_WRITE_EXTERNAL_STORAGE = 1001
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binder = ActivityIntroBinding.inflate(layoutInflater)
         setContentView(binder.root)
 
+        checkPermission()
+    }
+
+    private fun checkPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            // 유저가 이전에 권한을 거부한 경우, 접근권한 안내메시지 출력
+            val isPermissionRejeted =
+                App.SharedPrefHelper.getBoolean("is_storage_permission_rejected", false)
+            Log.d("JDEBUG", "isPermissionRejeted : $isPermissionRejeted")
+            if (isPermissionRejeted) {
+                Toast.makeText(
+                    this@IntroActivity,
+                    "앱 사용을 위해 저장소 권한을 허용해주세요",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            // Permission is not granted. No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                REQUEST_WRITE_EXTERNAL_STORAGE
+            )
+        } else {
+            // Permission has already been granted
+            init()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_WRITE_EXTERNAL_STORAGE -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    init()
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    App.SharedPrefHelper.edit().putBoolean("is_storage_permission_rejected", true)
+                        .apply()
+                    Toast.makeText(
+                        this@IntroActivity,
+                        "앱 사용을 위해 저장소 권한을 허용해주세요",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    finish()
+                }
+                return
+            }
+        }
+    }
+
+    private fun init() {
         // uuid for reqAdData
         var uuid = App.SharedPrefHelper.getString("uuid", "")
         if (uuid.isNullOrEmpty()) {
@@ -38,6 +108,7 @@ class IntroActivity : AppCompatActivity() {
         // 앱 구동 후 현재 서버 state 상태 확인.
         reqAdData(uuid, "N")
     }
+
 
     private fun reqAdData(uuid: String, reqRentalNumber: String) {
         val job = CoroutineScope(Dispatchers.IO).launch {

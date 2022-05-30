@@ -44,6 +44,7 @@ class Utils {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("알림")
             builder.setMessage(msg)
+            builder.setPositiveButton("확인", null)
             builder.create().show()
         }
     }
