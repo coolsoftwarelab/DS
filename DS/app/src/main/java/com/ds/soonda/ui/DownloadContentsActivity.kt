@@ -20,7 +20,7 @@ import com.google.gson.reflect.TypeToken
 
 class DownloadContentsActivity : AppCompatActivity() {
     private val TMP_FILE_DOWN_PATH =
-        "https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_2mb.mp4"
+        "https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
 
     lateinit var binder: ActivityDownloadContentsBinding
     lateinit var downloadIdList: ArrayList<Long?>

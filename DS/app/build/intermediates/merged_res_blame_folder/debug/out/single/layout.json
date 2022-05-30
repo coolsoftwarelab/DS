@@ -1,0 +1,54 @@
+[
+    {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-mergeDebugResources-22:/layout/fragment_template_second.xml",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/fragment_template_second.xml"
+    },
+    {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-mergeDebugResources-22:/layout/activity_ad_main.xml",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/activity_ad_main.xml"
+    },
+    {
+        "merged": "com.ds.soonda.app-mergeDebugResources-22:/layout/fragment_template_second.xml",
+        "source": "com.ds.soonda.app-main-25:/layout/fragment_template_second.xml"
+    },
+    {
+        "merged": "com.ds.soonda.app-mergeDebugResources-22:/layout/fragment_template_first.xml",
+        "source": "com.ds.soonda.app-main-25:/layout/fragment_template_first.xml"
+    },
+    {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-mergeDebugResources-22:/layout/layout_template_2.xml",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/layout_template_2.xml"
+    },
+    {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-mergeDebugResources-22:/layout/layout_template_4.xml",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/layout_template_4.xml"
+    },
+    {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-mergeDebugResources-22:/layout/activity_intro.xml",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/activity_intro.xml"
+    },
+    {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-mergeDebugResources-22:/layout/layout_template_5.xml",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/layout_template_5.xml"
+    },
+    {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-mergeDebugResources-22:/layout/layout_template_1.xml",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/layout_template_1.xml"
+    },
+    {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-mergeDebugResources-22:/layout/fragment_template_first.xml",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/fragment_template_first.xml"
+    },
+    {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-mergeDebugResources-22:/layout/activity_rental_authentication.xml",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/activity_rental_authentication.xml"
+    },
+    {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-mergeDebugResources-22:/layout/layout_template_3.xml",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/layout_template_3.xml"
+    },
+    {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-mergeDebugResources-22:/layout/activity_download_contents.xml",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/activity_download_contents.xml"
+    }
+]

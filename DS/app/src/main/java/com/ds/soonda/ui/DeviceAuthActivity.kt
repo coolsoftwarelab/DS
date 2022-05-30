@@ -40,7 +40,7 @@ class DeviceAuthActivity : AppCompatActivity() {
 
             if (response.isSuccessful) {
                 val adInfo: AdInfoDto? = response.body()
-                Log.d("JDUEBG", "adInfo?.state : ${adInfo?.state}")
+                Log.d("JDEBUG", "adInfo?.state : ${adInfo?.state}")
                 when (adInfo?.state) {
                     "error" -> {
                         Utils.showSimpleAlert(this@DeviceAuthActivity, adInfo.message)
