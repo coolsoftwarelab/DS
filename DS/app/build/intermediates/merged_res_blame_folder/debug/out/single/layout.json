@@ -8,10 +8,6 @@
         "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/activity_ad_main.xml"
     },
     {
-        "merged": "com.ds.soonda.app-mergeDebugResources-22:/layout/fragment_template_second.xml",
-        "source": "com.ds.soonda.app-main-25:/layout/fragment_template_second.xml"
-    },
-    {
         "merged": "com.ds.soonda.app-mergeDebugResources-22:/layout/fragment_template_first.xml",
         "source": "com.ds.soonda.app-main-25:/layout/fragment_template_first.xml"
     },

@@ -41,8 +41,8 @@ class DownloadContentsActivity : AppCompatActivity() {
                     ).show()
                     binder.txtDownload.text = "다운로드가 모두 완료되었습니다"
                     downloadIdList.clear()
-
                     startActivity(Intent(this@DownloadContentsActivity, AdMainActivity::class.java))
+                    finish()
                 }
             }
         }

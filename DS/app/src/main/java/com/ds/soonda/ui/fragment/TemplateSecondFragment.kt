@@ -1,27 +1,27 @@
 package com.ds.soonda.ui.fragment
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.ds.soonda.R
+import android.widget.ImageView
+import android.widget.VideoView
+import androidx.fragment.app.Fragment
+import com.ds.soonda.databinding.FragmentTemplateSecondBinding
+import com.ds.soonda.model.AcroMediaFileType
+import com.ds.soonda.util.Utils
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [TemplateSecondFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class TemplateSecondFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class TemplateSecondFragment(vararg adFilePath: String) : Fragment() {
+
+    private val adFilePath: Array<String> = adFilePath as Array<String>
+
+    private lateinit var binder: FragmentTemplateSecondBinding
+    private lateinit var imageResArr: Array<ImageView>
+    private lateinit var videoResArr: Array<VideoView>
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -29,37 +29,41 @@ class TemplateSecondFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_template_second, container, false)
+    ): View {
+        binder = FragmentTemplateSecondBinding.inflate(inflater)
+        return binder.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TemplateSecondFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TemplateSecondFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        imageResArr = arrayOf(binder.image1, binder.image2)
+        videoResArr = arrayOf(binder.video1, binder.video2)
+
+        setContents()
+
+        super.onViewCreated(view, savedInstanceState)
     }
+
+    private fun setContents() {
+        for ((index, path) in adFilePath.withIndex()) {
+            val type = Utils.getAcroMediaFileType(path)
+
+            if (type == AcroMediaFileType.IMAGE) {
+                val imageView = imageResArr[index]
+                imageView.visibility = View.VISIBLE
+                imageView.setImageURI(Uri.parse(path))
+            } else {
+                val videoView = videoResArr[index]
+                videoView.visibility = View.VISIBLE
+                videoView.setVideoPath(path)
+                videoView.requestFocus()
+                videoView.start()
+            }
+        }
+    }
+
 }
