@@ -58,7 +58,6 @@ class DeviceAuthActivity : AppCompatActivity() {
                     }
                     "adRunning" -> {
                         // 광고 송출중. 인증번호로 서버에 렌트기기등록 성공하면 adWait 상태
-                        // todo : 광고 순서 세팅하고 각 광고당 콘텐츠를 다운로드 해야한다 AdSequenceManager class 활용
                         val intent =
                             Intent(this@DeviceAuthActivity, DownloadContentsActivity::class.java)
                         val adJson = Gson().toJson(adInfo.ad)
