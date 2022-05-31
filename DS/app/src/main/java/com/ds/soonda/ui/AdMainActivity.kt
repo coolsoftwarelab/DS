@@ -25,10 +25,18 @@ class AdMainActivity : AppCompatActivity() {
         fragmentTransaction.add(R.id.fragment_container_view, t1Fragment).commit()
 
         Handler().postDelayed({
-            val t2Fragment = TemplateSecondFragment()
+//            val t2Fragment = TemplateSecondFragment(
+//                "$DOWNLOAD_DIR_PATH/Download-1.mp4",
+//                "$DOWNLOAD_DIR_PATH/Download-2.mp4"
+//            )
+            val t2Fragment = TemplateSecondFragment(
+                "$DOWNLOAD_DIR_PATH/iv1.png",
+                "$DOWNLOAD_DIR_PATH/Download-2.mp4"
+            )
+
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction.replace(R.id.fragment_container_view, t2Fragment).commit()
-        }, 5000)
+        }, 3000)
 
 
         // 서버정보에따라 template에 동적으로 VideoView, ImageView 생성

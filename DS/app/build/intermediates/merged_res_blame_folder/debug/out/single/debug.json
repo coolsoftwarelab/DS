@@ -64,10 +64,6 @@
         "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/layout_template_3.xml"
     },
     {
-        "merged": "com.ds.soonda.app-merged_res-23:/layout_fragment_template_second.xml.flat",
-        "source": "com.ds.soonda.app-main-25:/layout/fragment_template_second.xml"
-    },
-    {
         "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-merged_res-23:/layout_activity_intro.xml.flat",
         "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/activity_intro.xml"
     },

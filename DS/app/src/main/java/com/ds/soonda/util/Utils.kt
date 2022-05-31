@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.provider.Settings
+import com.ds.soonda.model.AcroMediaFileType
 import java.io.UnsupportedEncodingException
 import java.util.*
 
@@ -46,6 +47,14 @@ class Utils {
             builder.setMessage(msg)
             builder.setPositiveButton("확인", null)
             builder.create().show()
+        }
+
+        fun getAcroMediaFileType(filePath: String): AcroMediaFileType {
+            return if (filePath.contains("png")) {
+                AcroMediaFileType.IMAGE
+            } else {
+                AcroMediaFileType.VIDEO
+            }
         }
     }
 
