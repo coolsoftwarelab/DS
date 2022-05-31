@@ -12,6 +12,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.ds.soonda.databinding.ActivityDownloadContentsBinding
+import com.ds.soonda.manager.AdSequenceManager
 import com.ds.soonda.manager.DownloadHelper
 import com.ds.soonda.model.Ad
 import com.ds.soonda.util.Utils
@@ -65,9 +66,9 @@ class DownloadContentsActivity : AppCompatActivity() {
             return
         }
 
+        AdSequenceManager.getInstance().setAdList(adList as ArrayList<Ad>)
         downloadIdList = ArrayList()
         for (ad in adList) {
-            Log.d("JDEBUG", "ad index : ${ad.index}")
             val uri =
                 Uri.parse(TMP_FILE_DOWN_PATH)
             val downloadId = DownloadHelper.download(this, uri)

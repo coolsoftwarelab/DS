@@ -1,9 +1,7 @@
 package com.ds.soonda.ui.fragment
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,16 +18,9 @@ class TemplateSecondFragment(vararg adFilePath: String) : Fragment() {
     private val adFilePath: Array<String> = adFilePath as Array<String>
 
     private lateinit var binder: FragmentTemplateSecondBinding
+
     private lateinit var imageResArr: Array<ImageView>
     private lateinit var videoResArr: Array<VideoView>
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

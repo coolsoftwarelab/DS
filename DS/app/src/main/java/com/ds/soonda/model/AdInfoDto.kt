@@ -17,7 +17,7 @@ data class AdInfoDto(
 // 광고정보
 @Parcelize
 data class Ad(
-    val template: String,
+    val template: Int,
     val url1: String,
     val url2: String,
     val url3: String,
