@@ -1,48 +1,60 @@
 package com.ds.soonda.ui.fragment
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.VideoView
 import androidx.fragment.app.Fragment
-import com.ds.soonda.R
-import com.ds.soonda.databinding.FragmentTemplateFirstBinding
-import com.ds.soonda.model.AdInfoDto
+import com.ds.soonda.databinding.FragmentTemplateFifthBinding
 import com.ds.soonda.model.AcroMediaFileType
 import com.ds.soonda.util.Utils
 
-class TemplateFirstFragment : Fragment() {
-    private lateinit var binder: FragmentTemplateFirstBinding
+class TemplateFirstFragment(vararg adFilePath: String) : Fragment() {
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
+    private lateinit var binder: FragmentTemplateFifthBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private val adFilePath: Array<String> = adFilePath as Array<String>
+
+    private lateinit var imageResArr: Array<ImageView>
+    private lateinit var videoResArr: Array<VideoView>
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binder = FragmentTemplateFirstBinding.inflate(inflater)
+        binder = FragmentTemplateFifthBinding.inflate(inflater)
         return binder.root
     }
 
-    fun setContentsInfo(vararg filePath: String) {
-        val type = Utils.getAcroMediaFileType(filePath[0])
-        if (type == AcroMediaFileType.IMAGE) {
-            binder.image1.visibility = View.VISIBLE
-            binder.image1.setImageURI(Uri.parse(filePath[0]))
-        } else {
-            binder.video1.visibility = View.VISIBLE
-            binder.video1.setVideoPath(filePath[0])
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        imageResArr = arrayOf(binder.image1)
+        videoResArr = arrayOf(binder.video1)
+
+        setContents()
+
+        super.onViewCreated(view, savedInstanceState)
     }
 
+    private fun setContents() {
+        for ((index, path) in adFilePath.withIndex()) {
+            val type = Utils.getAcroMediaFileType(path)
+
+            if (type == AcroMediaFileType.IMAGE) {
+                val imageView = imageResArr[index]
+                imageView.visibility = View.VISIBLE
+                imageView.setImageURI(Uri.parse(path))
+            } else {
+                val videoView = videoResArr[index]
+                videoView.visibility = View.VISIBLE
+                videoView.setVideoPath(path)
+                videoView.requestFocus()
+                videoView.start()
+            }
+        }
+    }
 
 }

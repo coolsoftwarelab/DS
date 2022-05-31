@@ -2056,6 +2056,7 @@ id ignoreRequest
 id image
 id image_1
 id image_2
+id image_3
 id immediateStop
 id included
 id info
@@ -2304,6 +2305,7 @@ id useLogo
 id vertical_only
 id video_1
 id video_2
+id video_3
 id view_offset_helper
 id view_transition
 id view_tree_lifecycle_owner
@@ -2407,10 +2409,11 @@ layout design_navigation_menu
 layout design_navigation_menu_item
 layout design_text_input_end_icon
 layout design_text_input_start_icon
+layout fragment_template_fifth
 layout fragment_template_first
+layout fragment_template_fourth
 layout fragment_template_second
-layout layout_template_3
-layout layout_template_4
+layout fragment_template_third
 layout layout_template_5
 layout material_chip_input_combo
 layout material_clock_display
