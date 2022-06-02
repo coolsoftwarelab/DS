@@ -4,7 +4,7 @@ import com.ds.soonda.model.Ad
 
 class AdSequenceManager private constructor() {
 
-    private lateinit var adList: ArrayList<Ad>
+    private var adList: ArrayList<Ad> = ArrayList()
 
     fun setAdList(list: ArrayList<Ad>) {
         adList = list

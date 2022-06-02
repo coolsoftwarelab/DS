@@ -50,12 +50,17 @@ class Utils {
         }
 
         fun getAcroMediaFileType(filePath: String): AcroMediaFileType {
-            return if (filePath.contains("png")) {
+            return if (filePath.contains("png") || filePath.contains("jpg")) {
                 AcroMediaFileType.IMAGE
             } else {
                 AcroMediaFileType.VIDEO
             }
+
         }
+
+
+
+
     }
 
 }
