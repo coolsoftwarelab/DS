@@ -15,6 +15,7 @@
             android:id="@+id/image_1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scaleType="fitXY"
             android:visibility="gone" />
 
         <VideoView
@@ -36,14 +37,23 @@
             android:id="@+id/image_2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scaleType="fitXY"
             android:visibility="gone" />
 
-        <VideoView
-            android:id="@+id/video_2"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
+            android:layout_height="match_parent">
 
+            <VideoView
+                android:id="@+id/video_2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:visibility="gone" />
+        </RelativeLayout>
     </LinearLayout>
 
 

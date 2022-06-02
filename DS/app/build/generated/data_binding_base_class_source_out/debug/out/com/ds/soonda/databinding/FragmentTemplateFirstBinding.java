@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,10 +18,10 @@ import java.lang.String;
 
 public final class FragmentTemplateFirstBinding implements ViewBinding {
   @NonNull
-  private final LinearLayout rootView;
+  private final RelativeLayout rootView;
 
   @NonNull
-  public final LinearLayout adArea1Container;
+  public final RelativeLayout adArea1Container;
 
   @NonNull
   public final ImageView image1;
@@ -29,8 +29,8 @@ public final class FragmentTemplateFirstBinding implements ViewBinding {
   @NonNull
   public final VideoView video1;
 
-  private FragmentTemplateFirstBinding(@NonNull LinearLayout rootView,
-      @NonNull LinearLayout adArea1Container, @NonNull ImageView image1,
+  private FragmentTemplateFirstBinding(@NonNull RelativeLayout rootView,
+      @NonNull RelativeLayout adArea1Container, @NonNull ImageView image1,
       @NonNull VideoView video1) {
     this.rootView = rootView;
     this.adArea1Container = adArea1Container;
@@ -40,7 +40,7 @@ public final class FragmentTemplateFirstBinding implements ViewBinding {
 
   @Override
   @NonNull
-  public LinearLayout getRoot() {
+  public RelativeLayout getRoot() {
     return rootView;
   }
 
@@ -65,7 +65,7 @@ public final class FragmentTemplateFirstBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      LinearLayout adArea1Container = (LinearLayout) rootView;
+      RelativeLayout adArea1Container = (RelativeLayout) rootView;
 
       id = R.id.image_1;
       ImageView image1 = ViewBindings.findChildViewById(rootView, id);
@@ -79,7 +79,7 @@ public final class FragmentTemplateFirstBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentTemplateFirstBinding((LinearLayout) rootView, adArea1Container, image1,
+      return new FragmentTemplateFirstBinding((RelativeLayout) rootView, adArea1Container, image1,
           video1);
     }
     String missingId = rootView.getResources().getResourceName(id);

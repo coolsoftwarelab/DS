@@ -8,13 +8,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.VideoView
 import androidx.fragment.app.Fragment
-import com.ds.soonda.databinding.FragmentTemplateFifthBinding
+import com.ds.soonda.databinding.FragmentTemplateFirstBinding
 import com.ds.soonda.model.AcroMediaFileType
 import com.ds.soonda.util.Utils
 
 class TemplateFirstFragment(vararg adFilePath: String) : Fragment() {
 
-    private lateinit var binder: FragmentTemplateFifthBinding
+    private lateinit var binder: FragmentTemplateFirstBinding
 
     private val adFilePath: Array<String> = adFilePath as Array<String>
 
@@ -26,7 +26,7 @@ class TemplateFirstFragment(vararg adFilePath: String) : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binder = FragmentTemplateFifthBinding.inflate(inflater)
+        binder = FragmentTemplateFirstBinding.inflate(inflater)
         return binder.root
     }
 

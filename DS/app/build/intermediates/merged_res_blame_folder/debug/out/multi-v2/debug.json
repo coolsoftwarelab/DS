@@ -2093,11 +2093,11 @@
                 {
                     "source": "/Users/kdann/AndroidStudioProjects/Acro/DS/app/src/main/res/values/strings.xml",
                     "from": {
-                        "startLines": "1,4,5,3",
+                        "startLines": "1,3,4,2",
                         "startColumns": "4,4,4,4",
-                        "startOffsets": "16,186,240,116",
+                        "startOffsets": "16,128,182,58",
                         "endColumns": "41,53,56,69",
-                        "endOffsets": "53,235,292,181"
+                        "endOffsets": "53,177,234,123"
                     },
                     "to": {
                         "startLines": "1200,1209,1210,1215",

@@ -15,6 +15,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 인증번호 출력
@@ -38,37 +39,42 @@ class DeviceAuthActivity : AppCompatActivity() {
             val service = ServerRepository.getServerInterface()
             val response = service.reqAdData(App.uuid, "N")
 
-            if (response.isSuccessful) {
-                val adInfo: AdInfoDto? = response.body()
-                Log.d("JDEBUG", "adInfo?.state : ${adInfo?.state}")
-                when (adInfo?.state) {
-                    "error" -> {
-                        Utils.showSimpleAlert(this@DeviceAuthActivity, adInfo.message)
-                    }
-                    "rantWait",
-                    "wait" -> {
-                        // 인증번호로 기기등록 될때까지 일정 시간마다 폴링
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            pollingServerState()
-                        }, 3_000)
-                    }
-                    "adWait" -> {
-                        // 광고 송출 대기
+            withContext(Dispatchers.Main) {
+                if (response.isSuccessful) {
+                    val adInfo: AdInfoDto? = response.body()
+                    Log.d("JDEBUG", "adInfo?.state : ${adInfo?.state}")
+                    when (adInfo?.state) {
+                        "error" -> {
+                            Utils.showSimpleAlert(this@DeviceAuthActivity, adInfo.message)
+                        }
+                        "rantWait",
+                        "wait" -> {
+                            // 인증번호로 기기등록 될때까지 일정 시간마다 폴링
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                pollingServerState()
+                            }, 3_000)
+                        }
+                        "adWait" -> {
+                            // 광고 송출 대기
 
+                        }
+                        "adRunning" -> {
+                            // 광고 송출중. 인증번호로 서버에 렌트기기등록 성공하면 adWait 상태
+                            val intent =
+                                Intent(
+                                    this@DeviceAuthActivity,
+                                    DownloadContentsActivity::class.java
+                                )
+                            val adJson = Gson().toJson(adInfo.ad)
+                            intent.putExtra("adList", adJson)
+                            startActivity(intent)
+                            finish()
+                        }
                     }
-                    "adRunning" -> {
-                        // 광고 송출중. 인증번호로 서버에 렌트기기등록 성공하면 adWait 상태
-                        val intent =
-                            Intent(this@DeviceAuthActivity, DownloadContentsActivity::class.java)
-                        val adJson = Gson().toJson(adInfo.ad)
-                        intent.putExtra("adList", adJson)
-                        startActivity(intent)
-                        finish()
-                    }
+                } else {
+                    val errMsg = response.message()
+                    Utils.showSimpleAlert(this@DeviceAuthActivity, "Error : $errMsg")
                 }
-            } else {
-                val errMsg = response.message()
-                Utils.showSimpleAlert(this@DeviceAuthActivity, "Error : $errMsg")
             }
         }
     }

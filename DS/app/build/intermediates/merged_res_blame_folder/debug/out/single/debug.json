@@ -8,6 +8,14 @@
         "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/mipmap-xxhdpi/ic_launcher.webp"
     },
     {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-merged_res-23:/layout_fragment_template_fifth.xml.flat",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/fragment_template_fifth.xml"
+    },
+    {
+        "merged": "com.ds.soonda.app-merged_res-23:/layout_fragment_template_fourth.xml.flat",
+        "source": "com.ds.soonda.app-main-25:/layout/fragment_template_fourth.xml"
+    },
+    {
         "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-merged_res-23:/layout_fragment_template_third.xml.flat",
         "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/fragment_template_third.xml"
     },
@@ -20,8 +28,16 @@
         "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/layout_template_5.xml"
     },
     {
+        "merged": "com.ds.soonda.app-merged_res-23:/layout_fragment_template_third.xml.flat",
+        "source": "com.ds.soonda.app-main-25:/layout/fragment_template_third.xml"
+    },
+    {
         "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-merged_res-23:/xml_data_extraction_rules.xml.flat",
         "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-merged_res-23:/anim_fade_out.xml.flat",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/anim/fade_out.xml"
     },
     {
         "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-merged_res-23:/mipmap-xxxhdpi_ic_launcher.webp.flat",
@@ -42,6 +58,10 @@
     {
         "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-merged_res-23:/layout_activity_download_contents.xml.flat",
         "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/activity_download_contents.xml"
+    },
+    {
+        "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-merged_res-23:/anim_fade_in.xml.flat",
+        "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/anim/fade_in.xml"
     },
     {
         "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-merged_res-23:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
@@ -66,6 +86,10 @@
     {
         "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-merged_res-23:/layout_activity_ad_main.xml.flat",
         "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/layout/activity_ad_main.xml"
+    },
+    {
+        "merged": "com.ds.soonda.app-merged_res-23:/layout_fragment_template_second.xml.flat",
+        "source": "com.ds.soonda.app-main-25:/layout/fragment_template_second.xml"
     },
     {
         "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-merged_res-23:/layout_activity_intro.xml.flat",
@@ -94,6 +118,10 @@
     {
         "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-merged_res-23:/mipmap-xhdpi_ic_launcher.webp.flat",
         "source": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-main-25:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.ds.soonda.app-merged_res-23:/layout_fragment_template_first.xml.flat",
+        "source": "com.ds.soonda.app-main-25:/layout/fragment_template_first.xml"
     },
     {
         "merged": "/Users/kdann/.gradle/daemon/7.3.3/com.ds.soonda.app-merged_res-23:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
