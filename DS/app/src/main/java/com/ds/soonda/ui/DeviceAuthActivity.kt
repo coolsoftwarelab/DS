@@ -28,10 +28,23 @@ class DeviceAuthActivity : AppCompatActivity() {
         binder = ActivityRentalAuthenticationBinding.inflate(layoutInflater)
         setContentView(binder.root)
 
-        val rentNumber = intent.getStringExtra("rentNumber")
-        binder.txtAuthNum.text = rentNumber
-
+        reqRentNumber()
         pollingServerState()
+    }
+
+    private fun reqRentNumber() {
+        val job = CoroutineScope(Dispatchers.IO).launch {
+            val service = ServerRepository.getServerInterface()
+            val response = service.reqAdData(App.uuid, "Y")
+
+            withContext(Dispatchers.Main) {
+                if (response.isSuccessful) {
+                    val adInfo: AdInfoDto? = response.body()
+                    Log.d("JDEBUG", "adInfo?.state : ${adInfo?.state}")
+                    binder.txtAuthNum.text = adInfo?.rentNumber
+                }
+            }
+        }
     }
 
     private fun pollingServerState() {
