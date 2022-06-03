@@ -1,5 +1,6 @@
 package com.ds.soonda.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
@@ -25,7 +26,7 @@ import org.apache.commons.io.FilenameUtils
 
 class AdMainActivity : AppCompatActivity() {
     private val DOWNLOAD_PATH =
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path +"/acro/"
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path + "/acro/"
 
     private val adManager = AdSequenceManager.getInstance()
 
@@ -132,9 +133,6 @@ class AdMainActivity : AppCompatActivity() {
             val response = service.reqAdData(App.uuid, "N")
 
             withContext(Dispatchers.Main) {
-                /**
-                 * todo (server bug : 기기반납해도 state가 adRunning 인 문제. 상태가 wait? 등으로 바뀌고 광고종료->인증화면 창으로 가야함.)
-                 */
                 if (response.isSuccessful) {
                     val adInfo: AdInfoDto? = response.body()
                     Log.d("JDEBUG", "polling adInfo?.state : ${adInfo?.state}")
@@ -143,7 +141,11 @@ class AdMainActivity : AppCompatActivity() {
                             Utils.showSimpleAlert(this@AdMainActivity, adInfo.message)
                         }
                         "rantWait" -> {
-
+                            // 기기 반납되면 rantWait 상태가 됨
+                            val intent =
+                                Intent(this@AdMainActivity, DeviceAuthActivity::class.java)
+                            startActivity(intent)
+                            finish()
                         }
                         "wait" -> {
                         }

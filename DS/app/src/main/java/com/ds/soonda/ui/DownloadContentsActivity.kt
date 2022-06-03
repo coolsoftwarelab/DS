@@ -137,6 +137,10 @@ class DownloadContentsActivity : AppCompatActivity() {
         Log.d("JDEBUG", "clearAllOldFile() ")
         val downloadAcroDir =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).canonicalPath + "/acro/"
+
+        if (!File(downloadAcroDir).exists()) {
+            File(downloadAcroDir).mkdir()
+        }
         val fileList = File(downloadAcroDir).listFiles()
         Log.d("JDEBUG", "downloadDir fileList size : ${fileList.size}")
         for (file in fileList) {

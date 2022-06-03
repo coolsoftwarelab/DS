@@ -38,7 +38,7 @@ class TmpGetStorageCapacity {
 
         fun getAvailableInternalMemorySize(): String? {
             val path: File = Environment.getDataDirectory()
-            val stat = StatFs(path.getPath())
+            val stat = StatFs(path.path)
             val blockSize = stat.blockSizeLong
             val availableBlocks = stat.availableBlocksLong
             return formatSize(availableBlocks * blockSize)
@@ -46,7 +46,7 @@ class TmpGetStorageCapacity {
 
         fun getTotalInternalMemorySize(): String? {
             val path: File = Environment.getDataDirectory()
-            val stat = StatFs(path.getPath())
+            val stat = StatFs(path.path)
             val blockSize = stat.blockSizeLong
             val totalBlocks = stat.blockCountLong
             return formatSize(totalBlocks * blockSize)

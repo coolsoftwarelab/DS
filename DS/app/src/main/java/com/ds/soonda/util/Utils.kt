@@ -3,8 +3,11 @@ package com.ds.soonda.util
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.os.Environment
+import android.os.StatFs
 import android.provider.Settings
 import com.ds.soonda.model.AcroMediaFileType
+import java.io.File
 import java.io.UnsupportedEncodingException
 import java.util.*
 
@@ -55,14 +58,18 @@ class Utils {
             } else {
                 AcroMediaFileType.VIDEO
             }
-
         }
 
-
-
+        fun getAvailableInternalMemorySize(): Long {
+            val path: File = Environment.getDataDirectory()
+            val stat = StatFs(path.path)
+            val blockSize = stat.blockSizeLong
+            val availableBlocks = stat.availableBlocksLong
+//            return TmpGetStorageCapacity.formatSize(availableBlocks * blockSize)
+            return availableBlocks * blockSize / 1024 / 1024 / 1024 // GB
+        }
 
     }
-
 }
 
 

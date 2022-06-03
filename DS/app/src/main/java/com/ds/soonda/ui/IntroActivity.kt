@@ -7,6 +7,7 @@ import android.media.MediaScannerConnection
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -61,6 +62,11 @@ class IntroActivity : AppCompatActivity() {
         // need to download
         // --
 
+        val availableGb = Utils.getAvailableInternalMemorySize()
+        if (availableGb < 1) {
+            Utils.showSimpleAlert(this, "저장공간이 부족합니다 확인 후 다시 실행해 주세요")
+            return
+        }
 
         checkPermission()
     }
@@ -127,6 +133,7 @@ class IntroActivity : AppCompatActivity() {
             App.SharedPrefHelper.edit().putString("uuid", uuid).apply()
         }
         App.uuid = uuid
+        Log.d("JDEBUG", "uuid :  ${uuid}")
 
         // 앱 구동 후 현재 서버 state 상태 확인.
         reqAdData(uuid, "N")
@@ -150,7 +157,6 @@ class IntroActivity : AppCompatActivity() {
                             // 대기상태(인증번호 발급), isRentalCertifyNumber=Y 로 전송시 인증번호를 신규로 발급한다.
                             val intent =
                                 Intent(this@IntroActivity, DeviceAuthActivity::class.java)
-                            intent.putExtra("rentNumber", adInfo.rentNumber)
                             startActivity(intent)
                             finish()
                         }
@@ -158,7 +164,9 @@ class IntroActivity : AppCompatActivity() {
                             // 대기상태(인증번호 미발급), isRentalCertifyNumber=N로 전송시 인증번호는 발급하지 않는다.
                             // 처음 reqAdData() 하면 서버에서 자동으로 기기등록 수행하고 rantWait 상태를 리턴해준다
                             // 인증번호 발급 요청 하고 성공하면 서버에서 "wait" 상태가되고 인증번호가 리턴됨
-                            reqAdData(uuid, "Y")
+                            Handler(mainLooper).postDelayed({
+                                reqAdData(uuid, "Y")
+                            }, 3000)
                         }
                         "adWait" -> {
                             // 광고 송출 대기
@@ -168,14 +176,10 @@ class IntroActivity : AppCompatActivity() {
                             val intent =
                                 Intent(this@IntroActivity, DownloadContentsActivity::class.java)
                             val adJson = Gson().toJson(adInfo.ad)
-                            Log.d(
-                                "JDEBUG",
-                                "adJson :  ${adJson}"
-                            )
+                            Log.d("JDEBUG", "adJson :  ${adJson}")
                             intent.putExtra("adList", adJson)
                             startActivity(intent)
                             finish()
-
                         }
                     }
                 } else {
