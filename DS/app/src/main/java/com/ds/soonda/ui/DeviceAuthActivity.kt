@@ -50,9 +50,11 @@ class DeviceAuthActivity : AppCompatActivity() {
                         "rantWait",
                         "wait" -> {
                             // 인증번호로 기기등록 될때까지 일정 시간마다 폴링
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                pollingServerState()
-                            }, 3_000)
+                            if (App.getActivityState() == App.ActivityState.FOREGROUND) {
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    pollingServerState()
+                                }, 3_000)
+                            }
                         }
                         "adWait" -> {
                             // 광고 송출 대기

@@ -49,7 +49,7 @@ class IntroActivity : AppCompatActivity() {
         // for test goto main
         // ++
 //        startActivity(Intent(this@IntroActivity, AdMainActivity::class.java))
-//        // uuid for reqAdData
+        // uuid for reqAdData
 //        var uuid = App.SharedPrefHelper.getString("uuid", "")
 //        if (uuid.isNullOrEmpty()) {
 //            uuid = Utils.getUUID(this)
@@ -57,6 +57,8 @@ class IntroActivity : AppCompatActivity() {
 //        }
 //        App.uuid = uuid
 //        if (true) return
+
+        // need to download
         // --
 
 
@@ -176,9 +178,6 @@ class IntroActivity : AppCompatActivity() {
 
                         }
                     }
-
-                    // Todo : state 이 정상이라면 광고 이미지 및 영상 다운로드?
-
                 } else {
                     val errMsg = response.message()
                     Utils.showSimpleAlert(this@IntroActivity, "Error : $errMsg")

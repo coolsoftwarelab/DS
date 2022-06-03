@@ -1999,6 +1999,7 @@ id disableIntraAutoTransition
 id disablePostScroll
 id disableScroll
 id disjoint
+id downloadProgress
 id dragAnticlockwise
 id dragClockwise
 id dragDown

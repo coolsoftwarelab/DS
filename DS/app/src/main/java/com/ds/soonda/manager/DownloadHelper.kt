@@ -30,13 +30,9 @@ class DownloadHelper {
                 setTitle("Download File")
                 setDescription("Downloading....")
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-//                setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
-//                    "Download.$fileExtension"
-//                )
                 setDestinationInExternalPublicDir(
                     Environment.DIRECTORY_DOWNLOADS,
-                    FilenameUtils.getName(uri.toString())
-//                    "Download.$fileExtension"
+                    "/acro/" + FilenameUtils.getName(uri.toString())
                 )
                 setMimeType("*/*")
             }

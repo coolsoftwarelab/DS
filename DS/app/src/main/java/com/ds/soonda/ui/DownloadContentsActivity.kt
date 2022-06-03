@@ -5,11 +5,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
+import android.os.*
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -21,15 +18,17 @@ import com.ds.soonda.model.Ad
 import com.ds.soonda.util.Utils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.CoroutineScope
-import java.util.function.Predicate
+import kotlinx.coroutines.*
+import java.io.File
 
 class DownloadContentsActivity : AppCompatActivity() {
-//    private val TMP_FILE_DOWN_PATH =
-//        "https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
 
-    lateinit var binder: ActivityDownloadContentsBinding
-    lateinit var downloadIdList: ArrayList<Long?>
+    private val UPDATE_PROGRESSBAR = 1000
+
+    private lateinit var binder: ActivityDownloadContentsBinding
+    private lateinit var downloadIdList: ArrayList<Long?>
+    private var downloadTotalCount = 0
+    private var handler: Handler? = null
 
     private val downloadCompleteBr = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -37,6 +36,14 @@ class DownloadContentsActivity : AppCompatActivity() {
 
             if (downloadIdList.contains(id)) {
                 downloadIdList.remove(id)
+
+                val progress: Int =
+                    ((downloadTotalCount - downloadIdList.size).toDouble() / downloadTotalCount * 100).toInt()
+                Log.d("JDEBUG", "progress : $progress")
+                val message = Message.obtain()
+                message.what = UPDATE_PROGRESSBAR
+                message.arg1 = progress
+                handler?.sendMessage(message)
 
                 // Download complete all
                 if (downloadIdList.size == 0) {
@@ -54,11 +61,18 @@ class DownloadContentsActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
+    //    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binder = ActivityDownloadContentsBinding.inflate(layoutInflater)
         setContentView(binder.root)
+
+        handler = object : Handler(mainLooper) {
+            override fun handleMessage(msg: Message?) {
+                val progress = if (msg?.arg1 == null) 0 else msg.arg1
+                binder.downloadProgress.progress = progress
+            }
+        }
 
         clearAllOldFile()
 
@@ -66,10 +80,12 @@ class DownloadContentsActivity : AppCompatActivity() {
 
         // 광고 정보 리스트
         var adListJson = intent.getStringExtra("adList")
-        // Todo : hjkwon temp for test
+
+        //++ Todo : hjkwon temp for test
         adListJson = assets.open("testjson.txt").bufferedReader().use {
             it.readText()
         }
+        //--
 
         Log.d("JDEBUG", "adListJson : $adListJson ")
 
@@ -105,8 +121,6 @@ class DownloadContentsActivity : AppCompatActivity() {
                 downloadId3 = DownloadHelper.download(this, uri3)
             }
 
-//            val downloadId2 = DownloadHelper.download(this, uri2)
-//            val downloadId3 = DownloadHelper.download(this, uri3)
             Log.d("JDEBUG", "downloadId 1 : $downloadId1")
             Log.d("JDEBUG", "downloadId 2 : $downloadId2")
             Log.d("JDEBUG", "downloadId 3 : $downloadId3")
@@ -115,39 +129,21 @@ class DownloadContentsActivity : AppCompatActivity() {
             downloadIdList.add(downloadId2)
             downloadIdList.add(downloadId3)
         }
-        downloadIdList.removeIf { it==0L }
+        downloadIdList.removeIf { it == 0L }
+        downloadTotalCount = downloadIdList.size
     }
 
     private fun clearAllOldFile() {
-        val downloadDir =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        Log.d("JDEBUG", "downloadDir path : ${downloadDir.path}")
-
-        val fileList = downloadDir.listFiles()
-        Log.d("JDEBUG", "fileList size : ${fileList.size}")
+        Log.d("JDEBUG", "clearAllOldFile() ")
+        val downloadAcroDir =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).canonicalPath + "/acro/"
+        val fileList = File(downloadAcroDir).listFiles()
+        Log.d("JDEBUG", "downloadDir fileList size : ${fileList.size}")
         for (file in fileList) {
             if (file.exists()) {
                 val result = file.deleteRecursively()
-                Log.d("JDEBUG", "del result : ${result}")
+                Log.d("JDEBUG", "del result : $result")
             }
         }
-
-//        MediaScannerConnection.scanFile(
-//            this,
-//            downloadDir.list(),
-//            null
-//        ) { path, uri ->
-//            Log.d("JDEBUG", "Scanned " + path + ":")
-//            Log.d("JDEBUG", "-> uri=" + uri)
-//
-//            val fileList = downloadDir.listFiles()
-//            Log.d("JDEBUG", "fileList size : ${fileList.size}")
-//            for (file in fileList) {
-//                if (file.exists()) {
-//                    val result = file.deleteRecursively()
-//                    Log.d("JDEBUG", "del result : ${result}")
-//                }
-//            }
-//        }
     }
 }
