@@ -21,6 +21,7 @@ drawable ic_launcher_foreground
 id ad_area1_container
 id ad_area2_container
 id ad_area3_container
+id downloadProgress
 id fragment_container
 id fragment_container_view
 id image_1
