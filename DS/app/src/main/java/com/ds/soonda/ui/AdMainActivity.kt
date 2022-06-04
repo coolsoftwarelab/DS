@@ -111,15 +111,16 @@ class AdMainActivity : AppCompatActivity() {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction
                 .setCustomAnimations(
-                    androidx.appcompat.R.anim.abc_fade_in,
-                    androidx.appcompat.R.anim.abc_fade_out
+                    R.anim.slide_in_right,
+                    R.anim.slide_out_left
                 )
                 .replace(R.id.fragment_container_view, fragment).commit()
             playAdIndex++
         } catch (e: IllegalStateException) {
             // When fragment destroyed
-            Log.d("JDEBUG", "playAd IllegalStateException")
             e.printStackTrace()
+            Log.d("JDEBUG", "playAd IllegalStateException")
+            handler.removeCallbacksAndMessages(null)
             finish()
         }
     }
