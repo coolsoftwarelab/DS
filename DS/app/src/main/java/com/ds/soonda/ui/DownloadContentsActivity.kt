@@ -81,9 +81,9 @@ class DownloadContentsActivity : AppCompatActivity() {
         var adListJson = intent.getStringExtra("adList")
 
         //++ Todo : hjkwon temp for test
-        adListJson = assets.open("test_json_2.txt").bufferedReader().use {
-            it.readText()
-        }
+//        adListJson = assets.open("test_json_2.txt").bufferedReader().use {
+//            it.readText()
+//        }
         //--
 
         Log.d("JDEBUG", "adListJson : $adListJson ")
@@ -95,8 +95,15 @@ class DownloadContentsActivity : AppCompatActivity() {
         }
 
         AdSequenceManager.getInstance().setAdList(adList as ArrayList<Ad>)
+
         downloadIdList = ArrayList()
         for (ad in adList) {
+
+            // todo hjkwon temp for test contain https://
+//            if (!ad.url1.contains("https://")) {
+//
+//            }
+
             val uri1 =
                 Uri.parse(ad.url1)
             val uri2 =
