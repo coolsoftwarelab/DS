@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.*
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.ds.soonda.databinding.ActivityDownloadContentsBinding
 import com.ds.soonda.manager.AdSequenceManager
@@ -82,9 +81,9 @@ class DownloadContentsActivity : AppCompatActivity() {
         var adListJson = intent.getStringExtra("adList")
 
         //++ Todo : hjkwon temp for test
-        adListJson = assets.open("testjson.txt").bufferedReader().use {
-            it.readText()
-        }
+//        adListJson = assets.open("test_json_2.txt").bufferedReader().use {
+//            it.readText()
+//        }
         //--
 
         Log.d("JDEBUG", "adListJson : $adListJson ")
@@ -96,8 +95,15 @@ class DownloadContentsActivity : AppCompatActivity() {
         }
 
         AdSequenceManager.getInstance().setAdList(adList as ArrayList<Ad>)
+
         downloadIdList = ArrayList()
         for (ad in adList) {
+
+            // todo hjkwon temp for test contain https://
+//            if (!ad.url1.contains("https://")) {
+//
+//            }
+
             val uri1 =
                 Uri.parse(ad.url1)
             val uri2 =
