@@ -2,6 +2,7 @@ package com.ds.soonda.ui.fragment
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,8 @@ class TemplateThirdFragment(vararg adFilePath: String) : Fragment() {
 
     private lateinit var imageResArr: Array<ImageView>
     private lateinit var videoResArr: Array<VideoView>
+
+    private var isVideoViewReadyCnt = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +54,16 @@ class TemplateThirdFragment(vararg adFilePath: String) : Fragment() {
                 videoView.visibility = View.VISIBLE
                 videoView.setVideoPath(path)
                 videoView.requestFocus()
-                videoView.start()
+                videoView.setOnPreparedListener {
+                    Log.d("JDEBUG", "Prepared isVideoViewReadyCnt : $isVideoViewReadyCnt")
+                    if(isVideoViewReadyCnt++ == videoResArr.size-1) {
+                        for (view in videoResArr) {
+                            view.start()
+                        }
+                        isVideoViewReadyCnt=0
+                    }
+                }
+//                videoView.start()
             }
         }
     }
