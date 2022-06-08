@@ -52,6 +52,9 @@ class TemplateFourthFragment(vararg adFilePath: String) : Fragment() {
                 videoView.visibility = View.VISIBLE
                 videoView.setVideoPath(path)
                 videoView.requestFocus()
+                videoView.setOnPreparedListener {
+                    it.isLooping = true
+                }
                 videoView.start()
             }
         }

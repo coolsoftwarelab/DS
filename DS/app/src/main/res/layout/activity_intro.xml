@@ -6,14 +6,32 @@
     android:layout_height="match_parent"
     tools:context=".ui.IntroActivity">
 
-    <TextView
-        android:id="@+id/txtAuthNum"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="인증번호가 없습니다."
-        android:textSize="30dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txtAcroLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="ACRO"
+            android:textSize="50dp" />
+
+        <TextView
+            android:id="@+id/txtAuthNum"
+            android:layout_width="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="디바이스 정보 확인 중입니다.\n\n완료 시 까지 전원을 끄지 마세요"
+            android:textSize="20dp" />
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

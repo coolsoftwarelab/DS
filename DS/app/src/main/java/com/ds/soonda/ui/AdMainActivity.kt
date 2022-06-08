@@ -6,6 +6,8 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.Window
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.ds.soonda.R
@@ -38,6 +40,15 @@ class AdMainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
+        // Screen keep on
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         binder = ActivityAdMainBinding.inflate(layoutInflater)
         setContentView(binder.root)
 
@@ -127,7 +138,7 @@ class AdMainActivity : AppCompatActivity() {
 
     // polling for end of Worker job
     private fun pollingServerState() {
-        Log.d("JDEBUG", "pollingServerState()")
+        Log.d("JDEBUG", "AdMainAcitivty pollingServerState()")
 
         val job = CoroutineScope(Dispatchers.IO).launch {
             val service = ServerRepository.getServerInterface()
@@ -141,7 +152,7 @@ class AdMainActivity : AppCompatActivity() {
                         "error" -> {
                             Utils.showSimpleAlert(this@AdMainActivity, adInfo.message)
                         }
-                        "rantWait" -> {
+                        "RANT_WAIT" -> {
                             // 기기 반납되면 rantWait 상태가 됨
                             val intent =
                                 Intent(this@AdMainActivity, DeviceAuthActivity::class.java)
