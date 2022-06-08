@@ -21,8 +21,6 @@ class TemplateFifthFragment(vararg adFilePath: String) : Fragment() {
     private lateinit var imageResArr: Array<ImageView>
     private lateinit var videoResArr: Array<VideoView>
 
-    private var isVideoViewReadyCnt = 0
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,13 +52,9 @@ class TemplateFifthFragment(vararg adFilePath: String) : Fragment() {
                 videoView.setVideoPath(path)
                 videoView.requestFocus()
                 videoView.setOnPreparedListener {
-                    if(++isVideoViewReadyCnt == videoResArr.size-1) {
-                        for (view in videoResArr) {
-                            view.start()
-                        }
-                    }
+                    it.isLooping = true
                 }
-//                videoView.start()
+                videoView.start()
             }
         }
     }

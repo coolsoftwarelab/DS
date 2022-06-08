@@ -6,27 +6,52 @@
     android:layout_height="match_parent"
     tools:context=".ui.DownloadContentsActivity">
 
-    <ProgressBar
-        android:id="@+id/downloadProgress"
-        style="?android:attr/progressBarStyleHorizontal"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_marginBottom="50dp"
-        android:max="100"
-        android:progress="0"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/txtDownload"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Download..."
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
+        <TextView
+            android:id="@+id/txtAcroLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="ACRO"
+            android:textSize="50dp" />
+
+        <TextView
+            android:id="@+id/txtDownload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:text="송출할 광고 다운로드 중"
+            android:textSize="30dp" />
+
+        <ProgressBar
+            android:id="@+id/downloadProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="10dp"
+            android:max="100"
+            android:progress="0" />
+
+        <TextView
+            android:id="@+id/txtNextStep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:text="워커님 마이페이지 > 미션수행 메뉴에서\n수행할 미션 상세페이지로 이동 후\n광고송출 버튼을 눌러주세요."
+            android:textSize="20dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -55,6 +55,7 @@ class TemplateThirdFragment(vararg adFilePath: String) : Fragment() {
                 videoView.setVideoPath(path)
                 videoView.requestFocus()
                 videoView.setOnPreparedListener {
+                    it.isLooping = true
                     Log.d("JDEBUG", "Prepared isVideoViewReadyCnt : $isVideoViewReadyCnt")
                     if(isVideoViewReadyCnt++ == videoResArr.size-1) {
                         for (view in videoResArr) {

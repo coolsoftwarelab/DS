@@ -8,17 +8,24 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.*
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.ds.soonda.application.App
 import com.ds.soonda.databinding.ActivityDownloadContentsBinding
 import com.ds.soonda.manager.AdSequenceManager
 import com.ds.soonda.manager.DownloadHelper
 import com.ds.soonda.model.Ad
+import com.ds.soonda.model.AdInfoDto
+import com.ds.soonda.repository.ServerRepository
 import com.ds.soonda.util.Utils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
 import java.io.File
+import java.lang.Runnable
+import java.util.*
+import kotlin.collections.ArrayList
 
 class DownloadContentsActivity : AppCompatActivity() {
 
@@ -28,6 +35,9 @@ class DownloadContentsActivity : AppCompatActivity() {
     private lateinit var downloadIdList: ArrayList<Long?>
     private var downloadTotalCount = 0
     private var handler: Handler? = null
+    private val pollingTask = Runnable {
+        pollingServerState()
+    }
 
     private val downloadCompleteBr = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -51,16 +61,15 @@ class DownloadContentsActivity : AppCompatActivity() {
                         "Download complete",
                         Toast.LENGTH_SHORT
                     ).show()
-                    binder.txtDownload.text = "다운로드가 모두 완료되었습니다"
+                    binder.txtDownload.text = "다운로드 완료!"
+                    binder.txtNextStep.visibility = View.VISIBLE
+                    binder.downloadProgress.visibility = View.GONE
                     downloadIdList.clear()
-                    startActivity(Intent(this@DownloadContentsActivity, AdMainActivity::class.java))
-                    finish()
                 }
             }
         }
     }
 
-    //    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binder = ActivityDownloadContentsBinding.inflate(layoutInflater)
@@ -73,10 +82,19 @@ class DownloadContentsActivity : AppCompatActivity() {
             }
         }
 
-        clearAllOldFile()
-
         registerReceiver(downloadCompleteBr, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
+        clearAllOldFile()
+
+        pollingServerState()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        pollingServerState()
+    }
+
+    private fun prepareDownload(adListJson: String) {
         // 광고 정보 리스트
         var adListJson = intent.getStringExtra("adList")
 
@@ -98,12 +116,6 @@ class DownloadContentsActivity : AppCompatActivity() {
 
         downloadIdList = ArrayList()
         for (ad in adList) {
-
-            // todo hjkwon temp for test contain https://
-//            if (!ad.url1.contains("https://")) {
-//
-//            }
-
             val uri1 =
                 Uri.parse(ad.url1)
             val uri2 =
@@ -135,7 +147,8 @@ class DownloadContentsActivity : AppCompatActivity() {
             downloadIdList.add(downloadId2)
             downloadIdList.add(downloadId3)
         }
-        downloadIdList.removeIf { it == 0L }
+
+        downloadIdList.removeAll(Collections.singleton(0L))
         downloadTotalCount = downloadIdList.size
     }
 
@@ -155,5 +168,61 @@ class DownloadContentsActivity : AppCompatActivity() {
                 Log.d("JDEBUG", "del result : $result")
             }
         }
+    }
+
+    private fun pollingServerState() {
+        Log.d("JDEBUG", "DownloadContentsActivity pollingServerState()")
+
+        // recursive
+        handler?.postDelayed(pollingTask, 5000)
+
+        val job = CoroutineScope(Dispatchers.IO).launch {
+            val service = ServerRepository.getServerInterface()
+            val response = service.reqAdData(App.uuid, "N")
+
+            withContext(Dispatchers.Main) {
+                if (response.isSuccessful) {
+                    val adInfo: AdInfoDto? = response.body()
+                    Log.d("JDEBUG", "adInfo?.state : ${adInfo?.state}")
+                    when (adInfo?.state) {
+                        "adRunning" -> {
+                            startActivity(
+                                Intent(
+                                    this@DownloadContentsActivity,
+                                    AdMainActivity::class.java
+                                )
+                            )
+                            finish()
+                        }
+                        "RANT_WAIT",
+                        "adWait",
+                        "wait" -> {
+                            // do nothing
+                        }
+                        "adWaitForDownload" -> {
+                            stopServerPolling()
+                            val adJson = Gson().toJson(adInfo.ad)
+                            prepareDownload(adJson)
+                        }
+                        "error" -> {
+                            Utils.showSimpleAlert(this@DownloadContentsActivity, adInfo.message)
+                        }
+                    }
+                } else {
+                    val errMsg = response.message()
+                    Utils.showSimpleAlert(this@DownloadContentsActivity, "Error : $errMsg")
+                    stopServerPolling()
+                }
+            }
+        }
+    }
+
+    private fun stopServerPolling() {
+        handler?.removeCallbacks(pollingTask)
+    }
+
+    override fun onPause() {
+        stopServerPolling()
+        super.onPause()
     }
 }

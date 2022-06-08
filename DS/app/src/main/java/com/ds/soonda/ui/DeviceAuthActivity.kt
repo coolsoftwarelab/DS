@@ -48,6 +48,7 @@ class DeviceAuthActivity : AppCompatActivity() {
     }
 
     private fun pollingServerState() {
+        Log.d("JDEBUG", "DeviceAuthActivity pollingServerState()")
         val job = CoroutineScope(Dispatchers.IO).launch {
             val service = ServerRepository.getServerInterface()
             val response = service.reqAdData(App.uuid, "N")
@@ -66,7 +67,7 @@ class DeviceAuthActivity : AppCompatActivity() {
                             if (App.getActivityState() == App.ActivityState.FOREGROUND) {
                                 Handler(Looper.getMainLooper()).postDelayed({
                                     pollingServerState()
-                                }, 3_000)
+                                }, 5_000)
                             }
                         }
                         "adWait" -> {
