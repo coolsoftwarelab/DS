@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
-import com.ds.soonda.model.*
-import android.os.*
+import android.os.Bundle
+import android.os.Environment
+import android.os.Handler
+import android.os.Message
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -16,8 +18,7 @@ import com.ds.soonda.application.App
 import com.ds.soonda.databinding.ActivityDownloadContentsBinding
 import com.ds.soonda.manager.AdSequenceManager
 import com.ds.soonda.manager.DownloadHelper
-import com.ds.soonda.model.Ad
-import com.ds.soonda.model.AdInfoDto
+import com.ds.soonda.model.*
 import com.ds.soonda.repository.ServerRepository
 import com.ds.soonda.util.Utils
 import com.google.gson.Gson
@@ -26,7 +27,6 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.lang.Runnable
 import java.util.*
-import kotlin.collections.ArrayList
 
 class DownloadContentsActivity : AppCompatActivity() {
 
@@ -34,41 +34,11 @@ class DownloadContentsActivity : AppCompatActivity() {
 
     private lateinit var binder: ActivityDownloadContentsBinding
     private lateinit var downloadIdList: ArrayList<Long?>
+
     private var downloadTotalCount = 0
     private var handler: Handler? = null
     private val pollingTask = Runnable {
         pollingServerState()
-    }
-
-    private val downloadCompleteBr = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-
-            if (downloadIdList.contains(id)) {
-                downloadIdList.remove(id)
-
-                val progress: Int =
-                    ((downloadTotalCount - downloadIdList.size).toDouble() / downloadTotalCount * 100).toInt()
-                Log.d("JDEBUG", "progress : $progress")
-                val message = Message.obtain()
-                message.what = UPDATE_PROGRESSBAR
-                message.arg1 = progress
-                handler?.sendMessage(message)
-
-                // Download complete all
-                if (downloadIdList.size == 0) {
-                    Toast.makeText(
-                        this@DownloadContentsActivity,
-                        "Download complete",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    binder.txtDownload.text = "다운로드 완료!"
-                    binder.txtNextStep.visibility = View.VISIBLE
-                    binder.downloadProgress.visibility = View.GONE
-                    downloadIdList.clear()
-                }
-            }
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,18 +46,15 @@ class DownloadContentsActivity : AppCompatActivity() {
         binder = ActivityDownloadContentsBinding.inflate(layoutInflater)
         setContentView(binder.root)
 
+        registerReceiver(downloadCompleteBr, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        clearAllOldFile()
+
         handler = object : Handler(mainLooper) {
             override fun handleMessage(msg: Message?) {
                 val progress = if (msg?.arg1 == null) 0 else msg.arg1
                 binder.downloadProgress.progress = progress
             }
         }
-
-        registerReceiver(downloadCompleteBr, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-
-        clearAllOldFile()
-
-        pollingServerState()
     }
 
     override fun onResume() {
@@ -96,9 +63,6 @@ class DownloadContentsActivity : AppCompatActivity() {
     }
 
     private fun prepareDownload(adListJson: String) {
-        // 광고 정보 리스트
-//        var adListJson = intent.getStringExtra("adList")
-
         //++ hjkwon test
 //        adListJson = assets.open("test_json_2.txt").bufferedReader().use {
 //            it.readText()
@@ -133,7 +97,6 @@ class DownloadContentsActivity : AppCompatActivity() {
 
             if (ad.url2.isNotEmpty()) {
                 downloadId2 = DownloadHelper.download(this, uri2)
-
             }
 
             if (ad.url3.isNotEmpty()) {
@@ -153,28 +116,14 @@ class DownloadContentsActivity : AppCompatActivity() {
         downloadTotalCount = downloadIdList.size
     }
 
-    private fun clearAllOldFile() {
-        Log.d("JDEBUG", "clearAllOldFile()")
-        val downloadAcroDir =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).canonicalPath + "/acro/"
-
-        if (!File(downloadAcroDir).exists()) {
-            File(downloadAcroDir).mkdir()
-        }
-        val fileList = File(downloadAcroDir).listFiles()
-        Log.d("JDEBUG", "downloadDir fileList size : ${fileList.size}")
-        for (file in fileList) {
-            if (file.exists()) {
-                val result = file.deleteRecursively()
-                Log.d("JDEBUG", "del result : $result")
-            }
-        }
-    }
-
     private fun nextPhaseByState(adInfo: AdInfoDto?) {
         Log.d("JDEBUG", "adInfo?.state : ${adInfo?.state}")
         when (adInfo?.state) {
             AD_RUNNING -> {
+                stopServerPolling()
+                val adJsonList = Gson().toJson(adInfo.ad)
+                val adList = Gson().fromJson<List<Ad>>(adJsonList, object : TypeToken<List<Ad>>() {}.type)
+                AdSequenceManager.getInstance().setAdList(adList as ArrayList<Ad>)
                 startActivity(
                     Intent(
                         this@DownloadContentsActivity,
@@ -203,7 +152,7 @@ class DownloadContentsActivity : AppCompatActivity() {
         Log.d("JDEBUG", "DownloadContentsActivity pollingServerState()")
 
         // recursive
-        handler?.postDelayed(pollingTask, 5000)
+        handler?.postDelayed(pollingTask, App.serverPollingDelay)
 
         CoroutineScope(Dispatchers.IO).launch {
             val service = ServerRepository.getServerInterface()
@@ -218,6 +167,55 @@ class DownloadContentsActivity : AppCompatActivity() {
                     Utils.showSimpleAlert(this@DownloadContentsActivity, "Error : $errMsg")
                     stopServerPolling()
                 }
+            }
+        }
+    }
+
+    private val downloadCompleteBr = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+
+            if (downloadIdList.contains(id)) {
+                downloadIdList.remove(id)
+
+                val progress: Int =
+                    ((downloadTotalCount - downloadIdList.size).toDouble() / downloadTotalCount * 100).toInt()
+                Log.d("JDEBUG", "progress : $progress")
+                val message = Message.obtain()
+                message.what = UPDATE_PROGRESSBAR
+                message.arg1 = progress
+                handler?.sendMessage(message)
+
+                // Download complete all
+                if (downloadIdList.size == 0) {
+                    Toast.makeText(
+                        this@DownloadContentsActivity,
+                        "Download complete",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    binder.txtDownload.text = "다운로드 완료!"
+                    binder.txtNextStep.visibility = View.VISIBLE
+                    binder.downloadProgress.visibility = View.GONE
+                    downloadIdList.clear()
+
+                    // for get "adRunning"
+                    handler?.postDelayed(pollingTask, App.serverPollingDelay)
+                }
+            }
+        }
+    }
+
+    private fun clearAllOldFile() {
+        val downloadAcroDir =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).canonicalPath + "/acro/"
+
+        if (!File(downloadAcroDir).exists()) {
+            File(downloadAcroDir).mkdir()
+        }
+        val fileList = File(downloadAcroDir).listFiles()
+        for (file in fileList) {
+            if (file.exists()) {
+                val result = file.deleteRecursively()
             }
         }
     }

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Message
 import android.util.Log
 import com.ds.soonda.application.App
 import com.ds.soonda.model.*
@@ -25,12 +26,22 @@ class DeviceAuthActivity : AppCompatActivity() {
 
     lateinit var binder: ActivityRentalAuthenticationBinding
 
+    private var handler: Handler? = null
+    private val pollingTask = Runnable {
+        pollingServerState()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binder = ActivityRentalAuthenticationBinding.inflate(layoutInflater)
         setContentView(binder.root)
 
+        handler = Handler(mainLooper)
         reqRentNumber()
+    }
+
+    override fun onResume() {
+        super.onResume()
         pollingServerState()
     }
 
@@ -56,12 +67,10 @@ class DeviceAuthActivity : AppCompatActivity() {
             RANT_WAIT, WAIT -> {
                 // 인증번호로 기기등록 될때까지 일정 시간마다 폴링
                 if (App.activityState == App.ActivityState.FOREGROUND) {
-                    Handler(mainLooper).postDelayed({
-                        pollingServerState()
-                    }, App.serverPollingDelay)
+                    handler?.postDelayed(pollingTask, App.serverPollingDelay)
                 }
             }
-            AD_WAIT_FOR_DOWNLOAD, AD_RUNNING -> {
+            AD_WAIT_FOR_DOWNLOAD, AD_RUNNING, AD_WAIT -> {
                 // 광고 송출용 컨텐츠 다운로드화면으로 이동
                 val intent =
                     Intent(
@@ -72,9 +81,6 @@ class DeviceAuthActivity : AppCompatActivity() {
                 intent.putExtra("adList", adJson)
                 startActivity(intent)
                 finish()
-            }
-            AD_WAIT -> {
-                // 광고 송출 대기
             }
             ERROR -> {
                 Utils.showSimpleAlert(this, adInfo.message)
@@ -99,5 +105,14 @@ class DeviceAuthActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun stopServerPolling() {
+        handler?.removeCallbacks(pollingTask)
+    }
+
+    override fun onPause() {
+        stopServerPolling()
+        super.onPause()
     }
 }

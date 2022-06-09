@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
+import android.os.Message
 import android.util.Log
 import android.view.Window
 import android.view.WindowManager
@@ -34,6 +35,9 @@ class AdMainActivity : AppCompatActivity() {
     private lateinit var binder: ActivityAdMainBinding
     private lateinit var adList: ArrayList<Ad>
 
+    private val pollingTask = Runnable {
+        pollingServerState()
+    }
     private var playAdIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,10 +56,17 @@ class AdMainActivity : AppCompatActivity() {
 
         adList = adManager.getAdList()
         handler = Handler(mainLooper)
-
         prepareAd()
+    }
 
+    override fun onResume() {
+        super.onResume()
         pollingServerState()
+    }
+
+    override fun onPause() {
+        stopServerPolling()
+        super.onPause()
     }
 
     private fun prepareAd() {
@@ -163,9 +174,7 @@ class AdMainActivity : AppCompatActivity() {
                         AD_RUNNING -> {
                             // 광고 송출중. 인증번호로 서버에 렌트기기등록 성공하면 adWait 상태
                             if (App.activityState == App.ActivityState.FOREGROUND) {
-                                handler.postDelayed({
-                                    pollingServerState()
-                                }, 10 * 1000)
+                                handler.postDelayed(pollingTask, App.serverPollingDelay)
                             }
                         }
                     }
@@ -176,4 +185,10 @@ class AdMainActivity : AppCompatActivity() {
             }
         }
     }
+
+
+    private fun stopServerPolling() {
+        handler?.removeCallbacks(pollingTask)
+    }
+
 }
