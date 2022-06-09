@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.Window
 import android.view.WindowManager
@@ -14,8 +13,7 @@ import com.ds.soonda.R
 import com.ds.soonda.application.App
 import com.ds.soonda.databinding.ActivityAdMainBinding
 import com.ds.soonda.manager.AdSequenceManager
-import com.ds.soonda.model.Ad
-import com.ds.soonda.model.AdInfoDto
+import com.ds.soonda.model.*
 import com.ds.soonda.repository.ServerRepository
 import com.ds.soonda.ui.fragment.*
 import com.ds.soonda.util.Utils
@@ -53,8 +51,7 @@ class AdMainActivity : AppCompatActivity() {
         setContentView(binder.root)
 
         adList = adManager.getAdList()
-        handler = Handler(Looper.getMainLooper())
-
+        handler = Handler(mainLooper)
 
         prepareAd()
 
@@ -71,7 +68,7 @@ class AdMainActivity : AppCompatActivity() {
         playAd(selectedAd)
 
         // ad time 시간 이후에 다음 ad로 전환
-        if (App.getActivityState() == App.ActivityState.FOREGROUND) {
+        if (App.activityState == App.ActivityState.FOREGROUND) {
             handler.postDelayed({
                 Log.d("JDEBUG", "postDelayed time ${selectedAd.time}")
                 prepareAd()
@@ -131,7 +128,6 @@ class AdMainActivity : AppCompatActivity() {
             // When fragment destroyed
             e.printStackTrace()
             Log.d("JDEBUG", "playAd IllegalStateException")
-            handler.removeCallbacksAndMessages(null)
             finish()
         }
     }
@@ -140,33 +136,33 @@ class AdMainActivity : AppCompatActivity() {
     private fun pollingServerState() {
         Log.d("JDEBUG", "AdMainAcitivty pollingServerState()")
 
-        val job = CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val service = ServerRepository.getServerInterface()
-            val response = service.reqAdData(App.uuid, "N")
+            val response = service.reqServerAdInfo(App.uuid, "N")
 
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
                     val adInfo: AdInfoDto? = response.body()
                     Log.d("JDEBUG", "polling adInfo?.state : ${adInfo?.state}")
                     when (adInfo?.state) {
-                        "error" -> {
+                        ERROR -> {
                             Utils.showSimpleAlert(this@AdMainActivity, adInfo.message)
                         }
-                        "RANT_WAIT" -> {
+                        RANT_WAIT -> {
                             // 기기 반납되면 rantWait 상태가 됨
                             val intent =
                                 Intent(this@AdMainActivity, DeviceAuthActivity::class.java)
                             startActivity(intent)
                             finish()
                         }
-                        "wait" -> {
+                        WAIT -> {
                         }
-                        "adWait" -> {
+                        AD_WAIT -> {
                             // 광고 송출 대기
                         }
-                        "adRunning" -> {
+                        AD_RUNNING -> {
                             // 광고 송출중. 인증번호로 서버에 렌트기기등록 성공하면 adWait 상태
-                            if (App.getActivityState() == App.ActivityState.FOREGROUND) {
+                            if (App.activityState == App.ActivityState.FOREGROUND) {
                                 handler.postDelayed({
                                     pollingServerState()
                                 }, 10 * 1000)

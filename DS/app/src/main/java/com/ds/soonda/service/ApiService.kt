@@ -9,7 +9,7 @@ interface ApiService {
     //@POST("/_app/digitalSignage/device")
 
     @POST("/_app/digitalSignage/deviceTest/{deviceUUID}/{isRentalCertifyNumber}")
-    suspend fun reqAdData(
+    suspend fun reqServerAdInfo(
         @Path("deviceUUID") uuid: String,
         @Path("isRentalCertifyNumber") isRentalCertifyNumber: String
     ): Response<AdInfoDto>

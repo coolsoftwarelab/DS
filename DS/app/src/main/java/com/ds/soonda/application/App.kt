@@ -11,14 +11,11 @@ class App : Application() {
     companion object {
         lateinit var SharedPrefHelper: SharedPreferences
         lateinit var uuid: String
-        private var activityState: ActivityState = ActivityState.NONE
 
         private var running = 0
 
-
-        fun getActivityState(): ActivityState {
-            return activityState
-        }
+        var activityState: ActivityState = ActivityState.NONE
+        var serverPollingDelay = 5000L
     }
 
     enum class ActivityState {
