@@ -115,12 +115,14 @@ class IntroActivity : AppCompatActivity() {
                  * 처음 reqAdData() 하면 서버에서 자동으로 기기등록 수행하고 "rantWait" 상태를 리턴해준다
                  * 인증번호 발급 요청 하고 성공하면 서버에서 "wait" 상태가되고 인증번호가 리턴됨
                  */
-                App.serverPollingDelay = adInfo.bgTimer * 1000 // millis to second
-                intent = Intent(this, DeviceAuthActivity::class.java))
+                App.serverPollingDelay = (adInfo.bgTimer * 1000).toLong() // millis to second
+                intent = Intent(this, DeviceAuthActivity::class.java)
             }
             AD_WAIT_FOR_DOWNLOAD, AD_RUNNING, AD_WAIT -> {
-                // AD_WAIT. 광고 송출 대기. 기기등록되고 인증번호까지 인증된 상태. 컨텐츠 다운로드 필요
-                // AD_RUNNING. 광고 송출중. 광고중 앱 에러 후 앱 재시작 시 이 상태가 될 수 있다. 다시 컨텐츠 다운로드부터 검사
+                /**
+                 * AD_WAIT. 광고 송출 대기. 기기등록되고 인증번호까지 인증된 상태. 컨텐츠 다운로드 필요
+                 * AD_RUNNING. 광고 송출중. 광고중 앱 에러 후 앱 재시작 시 이 상태가 될 수 있다. 다시 컨텐츠 다운로드부터 검사
+                 */
                 intent = Intent(this, DownloadContentsActivity::class.java)
             }
             ERROR -> {

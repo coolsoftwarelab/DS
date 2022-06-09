@@ -15,7 +15,7 @@ class App : Application() {
         private var running = 0
 
         var activityState: ActivityState = ActivityState.NONE
-        var serverPollingDelay = 5000L
+        var serverPollingDelay = 5_000L
     }
 
     enum class ActivityState {
