@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
+import com.ds.soonda.model.*
 import android.os.*
 import android.util.Log
 import android.view.View
@@ -96,9 +97,9 @@ class DownloadContentsActivity : AppCompatActivity() {
 
     private fun prepareDownload(adListJson: String) {
         // 광고 정보 리스트
-        var adListJson = intent.getStringExtra("adList")
+//        var adListJson = intent.getStringExtra("adList")
 
-        //++ Todo : hjkwon temp for test
+        //++ hjkwon test
 //        adListJson = assets.open("test_json_2.txt").bufferedReader().use {
 //            it.readText()
 //        }
@@ -153,7 +154,7 @@ class DownloadContentsActivity : AppCompatActivity() {
     }
 
     private fun clearAllOldFile() {
-        Log.d("JDEBUG", "clearAllOldFile() ")
+        Log.d("JDEBUG", "clearAllOldFile()")
         val downloadAcroDir =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).canonicalPath + "/acro/"
 
@@ -170,44 +171,48 @@ class DownloadContentsActivity : AppCompatActivity() {
         }
     }
 
+    private fun nextPhaseByState(adInfo: AdInfoDto?) {
+        Log.d("JDEBUG", "adInfo?.state : ${adInfo?.state}")
+        when (adInfo?.state) {
+            AD_RUNNING -> {
+                startActivity(
+                    Intent(
+                        this@DownloadContentsActivity,
+                        AdMainActivity::class.java
+                    )
+                )
+                finish()
+            }
+            RANT_WAIT,
+            AD_WAIT,
+            WAIT -> {
+                // do nothing
+            }
+            AD_WAIT_FOR_DOWNLOAD -> {
+                stopServerPolling()
+                val adJson = Gson().toJson(adInfo.ad)
+                prepareDownload(adJson)
+            }
+            ERROR -> {
+                Utils.showSimpleAlert(this@DownloadContentsActivity, adInfo.message)
+            }
+        }
+    }
+
     private fun pollingServerState() {
         Log.d("JDEBUG", "DownloadContentsActivity pollingServerState()")
 
         // recursive
         handler?.postDelayed(pollingTask, 5000)
 
-        val job = CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val service = ServerRepository.getServerInterface()
-            val response = service.reqAdData(App.uuid, "N")
+            val response = service.reqServerAdInfo(App.uuid, "N")
 
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
                     val adInfo: AdInfoDto? = response.body()
-                    Log.d("JDEBUG", "adInfo?.state : ${adInfo?.state}")
-                    when (adInfo?.state) {
-                        "adRunning" -> {
-                            startActivity(
-                                Intent(
-                                    this@DownloadContentsActivity,
-                                    AdMainActivity::class.java
-                                )
-                            )
-                            finish()
-                        }
-                        "RANT_WAIT",
-                        "adWait",
-                        "wait" -> {
-                            // do nothing
-                        }
-                        "adWaitForDownload" -> {
-                            stopServerPolling()
-                            val adJson = Gson().toJson(adInfo.ad)
-                            prepareDownload(adJson)
-                        }
-                        "error" -> {
-                            Utils.showSimpleAlert(this@DownloadContentsActivity, adInfo.message)
-                        }
-                    }
+                    nextPhaseByState(adInfo)
                 } else {
                     val errMsg = response.message()
                     Utils.showSimpleAlert(this@DownloadContentsActivity, "Error : $errMsg")

@@ -1,8 +1,8 @@
 package com.ds.soonda.model
 
-val ERROR = "error"
-val WAIT = "wait"
-val RANT_WAIT = "rantWait"
-val AD_WAIT_FOR_DOWNLOAD = "adWaitForDownload"
-val AD_WAIT = "adWait"
-val AD_RUNNING = "adRunning"
+const val ERROR = "error"
+const val WAIT = "wait"
+const val RANT_WAIT = "rantWait"
+const val AD_WAIT_FOR_DOWNLOAD = "adWaitForDownload"
+const val AD_WAIT = "adWait"
+const val AD_RUNNING = "adRunning"

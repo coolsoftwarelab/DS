@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import com.ds.soonda.application.App
+import com.ds.soonda.model.*
 import com.ds.soonda.databinding.ActivityRentalAuthenticationBinding
 import com.ds.soonda.model.AdInfoDto
 import com.ds.soonda.repository.ServerRepository
@@ -21,6 +22,7 @@ import kotlinx.coroutines.withContext
  * 인증번호 출력
  */
 class DeviceAuthActivity : AppCompatActivity() {
+
     lateinit var binder: ActivityRentalAuthenticationBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,60 +35,64 @@ class DeviceAuthActivity : AppCompatActivity() {
     }
 
     private fun reqRentNumber() {
-        val job = CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val service = ServerRepository.getServerInterface()
-            val response = service.reqAdData(App.uuid, "Y")
+            val response = service.reqServerAdInfo(App.uuid, "Y")
 
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
                     val adInfo: AdInfoDto? = response.body()
-                    Log.d("JDEBUG", "adInfo?.state : ${adInfo?.state}")
+                    nextPhaseByState(adInfo)
                     binder.txtAuthNum.text = adInfo?.rentNumber
                 }
             }
         }
     }
 
+    private fun nextPhaseByState(adInfo: AdInfoDto?) {
+        Log.d("JDEBUG", "adInfo?.state : ${adInfo?.state}")
+
+        when (adInfo?.state) {
+            RANT_WAIT, WAIT -> {
+                // 인증번호로 기기등록 될때까지 일정 시간마다 폴링
+                if (App.activityState == App.ActivityState.FOREGROUND) {
+                    Handler(mainLooper).postDelayed({
+                        pollingServerState()
+                    }, App.serverPollingDelay)
+                }
+            }
+            AD_WAIT_FOR_DOWNLOAD, AD_RUNNING -> {
+                // 광고 송출용 컨텐츠 다운로드화면으로 이동
+                val intent =
+                    Intent(
+                        this,
+                        DownloadContentsActivity::class.java
+                    )
+                val adJson = Gson().toJson(adInfo.ad)
+                intent.putExtra("adList", adJson)
+                startActivity(intent)
+                finish()
+            }
+            AD_WAIT -> {
+                // 광고 송출 대기
+            }
+            ERROR -> {
+                Utils.showSimpleAlert(this, adInfo.message)
+                return
+            }
+        }
+    }
+
     private fun pollingServerState() {
         Log.d("JDEBUG", "DeviceAuthActivity pollingServerState()")
-        val job = CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val service = ServerRepository.getServerInterface()
-            val response = service.reqAdData(App.uuid, "N")
+            val response = service.reqServerAdInfo(App.uuid, "N")
 
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
                     val adInfo: AdInfoDto? = response.body()
-                    Log.d("JDEBUG", "adInfo?.state : ${adInfo?.state}")
-                    when (adInfo?.state) {
-                        "error" -> {
-                            Utils.showSimpleAlert(this@DeviceAuthActivity, adInfo.message)
-                        }
-                        "rantWait",
-                        "wait" -> {
-                            // 인증번호로 기기등록 될때까지 일정 시간마다 폴링
-                            if (App.getActivityState() == App.ActivityState.FOREGROUND) {
-                                Handler(Looper.getMainLooper()).postDelayed({
-                                    pollingServerState()
-                                }, 5_000)
-                            }
-                        }
-                        "adWait" -> {
-                            // 광고 송출 대기
-
-                        }
-                        "adRunning" -> {
-                            // 광고 송출중. 인증번호로 서버에 렌트기기등록 성공하면 adWait 상태
-                            val intent =
-                                Intent(
-                                    this@DeviceAuthActivity,
-                                    DownloadContentsActivity::class.java
-                                )
-                            val adJson = Gson().toJson(adInfo.ad)
-                            intent.putExtra("adList", adJson)
-                            startActivity(intent)
-                            finish()
-                        }
-                    }
+                    nextPhaseByState(adInfo)
                 } else {
                     val errMsg = response.message()
                     Utils.showSimpleAlert(this@DeviceAuthActivity, "Error : $errMsg")
@@ -94,5 +100,4 @@ class DeviceAuthActivity : AppCompatActivity() {
             }
         }
     }
-
 }
