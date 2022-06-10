@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
-import android.os.Message
 import android.util.Log
 import android.view.Window
 import android.view.WindowManager
@@ -48,9 +47,7 @@ class AdMainActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
-        // Screen keep on
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
         binder = ActivityAdMainBinding.inflate(layoutInflater)
         setContentView(binder.root)
 
@@ -70,8 +67,8 @@ class AdMainActivity : AppCompatActivity() {
     }
 
     private fun prepareAd() {
+        // 모든 광고리스트 순회했다면 처음부터 다시 광고 시작
         if (playAdIndex > adList.size - 1) {
-            // 모든 광고리스트 순회했다면 처음부터 다시 광고 시작
             playAdIndex = 0
         }
 
@@ -81,7 +78,6 @@ class AdMainActivity : AppCompatActivity() {
         // ad time 시간 이후에 다음 ad로 전환
         if (App.activityState == App.ActivityState.FOREGROUND) {
             handler.postDelayed({
-                Log.d("JDEBUG", "postDelayed time ${selectedAd.time}")
                 prepareAd()
             }, selectedAd.time * 1000L)
         }
@@ -98,42 +94,20 @@ class AdMainActivity : AppCompatActivity() {
 
         // select Template 1~5
         val fragment: Fragment = when (ad.template) {
-            1 -> {
-                TemplateFirstFragment(filePath1)
-            }
-            2 -> {
-                TemplateSecondFragment(
-                    filePath1, filePath2
-                )
-            }
-            3 -> {
-                TemplateThirdFragment(
-                    filePath1, filePath2, filePath3
-                )
-            }
-            4 -> {
-                TemplateFourthFragment(
-                    filePath1, filePath2
-                )
-            }
-            5 -> {
-                TemplateFifthFragment(
-                    filePath1, filePath2, filePath3
-                )
-            }
-            else -> {
-                Fragment()  // empty
-            }
+            1 -> TemplateFirstFragment(filePath1)
+            2 -> TemplateSecondFragment(filePath1, filePath2)
+            3 -> TemplateThirdFragment(filePath1, filePath2, filePath3)
+            4 -> TemplateFourthFragment(filePath1, filePath2)
+            5 -> TemplateFifthFragment(filePath1, filePath2, filePath3)
+            else -> Fragment()  // empty
         }
 
         try {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction
-                .setCustomAnimations(
-                    R.anim.slide_in_right,
-                    R.anim.slide_out_left
-                )
-                .replace(R.id.fragment_container_view, fragment).commit()
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+                .replace(R.id.fragment_container_view, fragment)
+                .commit()
             playAdIndex++
         } catch (e: IllegalStateException) {
             // When fragment destroyed
@@ -156,9 +130,6 @@ class AdMainActivity : AppCompatActivity() {
                     val adInfo: AdInfoDto? = response.body()
                     Log.d("JDEBUG", "polling adInfo?.state : ${adInfo?.state}")
                     when (adInfo?.state) {
-                        ERROR -> {
-                            Utils.showSimpleAlert(this@AdMainActivity, adInfo.message)
-                        }
                         RANT_WAIT -> {
                             // 기기 반납되면 rantWait 상태가 됨
                             val intent =
@@ -166,17 +137,14 @@ class AdMainActivity : AppCompatActivity() {
                             startActivity(intent)
                             finish()
                         }
-                        WAIT -> {
-                        }
-                        AD_WAIT -> {
-                            // 광고 송출 대기
-                        }
+                        WAIT, AD_WAIT -> {}
                         AD_RUNNING -> {
                             // 광고 송출중. 인증번호로 서버에 렌트기기등록 성공하면 adWait 상태
                             if (App.activityState == App.ActivityState.FOREGROUND) {
                                 handler.postDelayed(pollingTask, App.serverPollingDelay)
                             }
                         }
+                        ERROR -> Utils.showSimpleAlert(this, adInfo.message)
                     }
                 } else {
                     val errMsg = response.message()
@@ -186,9 +154,8 @@ class AdMainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun stopServerPolling() {
-        handler?.removeCallbacks(pollingTask)
+        handler.removeCallbacks(pollingTask)
     }
 
 }
