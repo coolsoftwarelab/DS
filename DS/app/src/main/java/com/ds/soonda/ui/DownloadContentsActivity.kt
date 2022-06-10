@@ -124,12 +124,7 @@ class DownloadContentsActivity : AppCompatActivity() {
                 val adJsonList = Gson().toJson(adInfo.ad)
                 val adList = Gson().fromJson<List<Ad>>(adJsonList, object : TypeToken<List<Ad>>() {}.type)
                 AdSequenceManager.getInstance().setAdList(adList as ArrayList<Ad>)
-                startActivity(
-                    Intent(
-                        this@DownloadContentsActivity,
-                        AdMainActivity::class.java
-                    )
-                )
+                startActivity(Intent(this, AdMainActivity::class.java))
                 finish()
             }
             RANT_WAIT,
@@ -143,7 +138,7 @@ class DownloadContentsActivity : AppCompatActivity() {
                 prepareDownload(adJson)
             }
             ERROR -> {
-                Utils.showSimpleAlert(this@DownloadContentsActivity, adInfo.message)
+                Utils.showSimpleAlert(this, adInfo.message)
             }
         }
     }
