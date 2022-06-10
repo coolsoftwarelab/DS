@@ -1,7 +1,7 @@
 [{
  	"effect": 0,
  	"index": 11,
- 	"template": 3,
+ 	"template": 1,
  	"time": 5,
  	"url1": "https://ad1020.iwinv.net/application/media/02_1080_720_ssoonda.mp4",
  	"url2": "https://ad1020.iwinv.net/application/media/05_540_1200_ssoonda.mp4",
@@ -17,7 +17,7 @@
  }, {
  	"effect": 0,
  	"index": 13,
- 	"template": 3,
+ 	"template": 5,
  	"time": 5,
  	"url1": "https://ad1020.iwinv.net/application/media/02_1080_720_ssoonda.mp4",
  	"url2": "https://ad1020.iwinv.net/application/media/05_540_1200_ssoonda.mp4",
@@ -25,7 +25,7 @@
  }, {
  	"effect": 0,
  	"index": 14,
- 	"template": 3,
+ 	"template": 2,
  	"time": 5,
  	"url1": "https://ad1020.iwinv.net/application/media/02_1080_720_ssoonda.mp4",
  	"url2": "https://ad1020.iwinv.net/application/media/05_540_1200_ssoonda.mp4",
@@ -33,7 +33,7 @@
  }, {
  	"effect": 0,
  	"index": 15,
- 	"template": 3,
+ 	"template": 1,
  	"time": 5,
  	"url1": "https://ad1020.iwinv.net/application/media/02_1080_720_ssoonda.mp4",
  	"url2": "https://ad1020.iwinv.net/application/media/05_540_1200_ssoonda.mp4",

@@ -34,7 +34,6 @@ class TemplateFourthFragment(vararg adFilePath: String) : Fragment() {
         imageResArr = arrayOf(binder.image1, binder.image2)
         videoResArr = arrayOf(binder.video1, binder.video2)
 
-        setContents()
 
         super.onViewCreated(view, savedInstanceState)
     }
@@ -58,6 +57,18 @@ class TemplateFourthFragment(vararg adFilePath: String) : Fragment() {
                 videoView.start()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setContents()
+    }
+
+    override fun onDestroyView() {
+        for(view in videoResArr) {
+            view.stopPlayback()
+        }
+        super.onDestroyView()
     }
 
 }

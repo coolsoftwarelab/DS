@@ -33,7 +33,6 @@ class TemplateFifthFragment(vararg adFilePath: String) : Fragment() {
         imageResArr = arrayOf(binder.image1, binder.image2, binder.image3)
         videoResArr = arrayOf(binder.video1, binder.video2, binder.video3)
 
-        setContents()
 
         super.onViewCreated(view, savedInstanceState)
     }
@@ -57,5 +56,17 @@ class TemplateFifthFragment(vararg adFilePath: String) : Fragment() {
                 videoView.start()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setContents()
+    }
+
+    override fun onDestroyView() {
+        for(view in videoResArr) {
+            view.stopPlayback()
+        }
+        super.onDestroyView()
     }
 }

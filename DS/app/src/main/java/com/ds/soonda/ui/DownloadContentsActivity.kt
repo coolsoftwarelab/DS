@@ -62,8 +62,8 @@ class DownloadContentsActivity : AppCompatActivity() {
     }
 
     private fun prepareDownload(adListJson: String) {
-        //++ hjkwon test
-//        adListJson = assets.open("test_json_2.txt").bufferedReader().use {
+        //++ hjkwon temp for test
+//        val adListJson = assets.open("test_json_1.txt").bufferedReader().use {
 //            it.readText()
 //        }
         //--
