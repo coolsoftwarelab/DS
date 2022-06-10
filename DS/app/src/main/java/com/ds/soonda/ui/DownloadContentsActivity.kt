@@ -47,7 +47,6 @@ class DownloadContentsActivity : AppCompatActivity() {
         setContentView(binder.root)
 
         registerReceiver(downloadCompleteBr, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-        clearAllOldFile()
 
         handler = object : Handler(mainLooper) {
             override fun handleMessage(msg: Message?) {
@@ -63,8 +62,8 @@ class DownloadContentsActivity : AppCompatActivity() {
     }
 
     private fun prepareDownload(adListJson: String) {
-        //++ hjkwon test
-//        adListJson = assets.open("test_json_2.txt").bufferedReader().use {
+        //++ hjkwon temp for test
+//        val adListJson = assets.open("test_json_1.txt").bufferedReader().use {
 //            it.readText()
 //        }
         //--
@@ -134,6 +133,7 @@ class DownloadContentsActivity : AppCompatActivity() {
             }
             AD_WAIT_FOR_DOWNLOAD -> {
                 stopServerPolling()
+                clearAllOldFile()
                 val adJson = Gson().toJson(adInfo.ad)
                 prepareDownload(adJson)
             }

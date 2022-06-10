@@ -36,9 +36,12 @@ class TemplateThirdFragment(vararg adFilePath: String) : Fragment() {
         imageResArr = arrayOf(binder.image1, binder.image2, binder.image3)
         videoResArr = arrayOf(binder.video1, binder.video2, binder.video3)
 
-        setContents()
-
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setContents()
     }
 
     private fun setContents() {
@@ -67,5 +70,12 @@ class TemplateThirdFragment(vararg adFilePath: String) : Fragment() {
 //                videoView.start()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        for(view in videoResArr) {
+            view.stopPlayback()
+        }
+        super.onDestroyView()
     }
 }

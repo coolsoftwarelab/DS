@@ -144,7 +144,7 @@ class AdMainActivity : AppCompatActivity() {
                                 handler.postDelayed(pollingTask, App.serverPollingDelay)
                             }
                         }
-                        ERROR -> Utils.showSimpleAlert(this, adInfo.message)
+                        ERROR -> Utils.showSimpleAlert(this@AdMainActivity, adInfo.message)
                     }
                 } else {
                     val errMsg = response.message()
