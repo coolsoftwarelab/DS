@@ -47,7 +47,6 @@ class DownloadContentsActivity : AppCompatActivity() {
         setContentView(binder.root)
 
         registerReceiver(downloadCompleteBr, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-        clearAllOldFile()
 
         handler = object : Handler(mainLooper) {
             override fun handleMessage(msg: Message?) {
@@ -134,6 +133,7 @@ class DownloadContentsActivity : AppCompatActivity() {
             }
             AD_WAIT_FOR_DOWNLOAD -> {
                 stopServerPolling()
+                clearAllOldFile()
                 val adJson = Gson().toJson(adInfo.ad)
                 prepareDownload(adJson)
             }
