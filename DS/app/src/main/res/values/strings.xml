@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ACRO</string>
+    <string name="app_name">쏘온다</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
