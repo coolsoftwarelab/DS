@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ServerRepository {
     private const val BASE_URL = "https://ad1020.iwinv.net" // Dev
-//    private const val BASE_URL = "http://ssoonda.com/"    // Product
+    //    private const val BASE_URL = "http://ssoonda.com/"    // Product
 
     fun getServerInterface(): ApiService {
         val interceptor = HttpLoggingInterceptor()
