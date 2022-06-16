@@ -4,7 +4,7 @@
 			"url2": "",
 			"url3": "",
 			"index": 1,
-			"time": 3,
+			"time": 5,
 			"startEffect": 1
 		},
 		{
@@ -13,7 +13,7 @@
 			"url2": "https://storage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteel.jpg",
 			"url3": "",
 			"index": 2,
-			"time": 3,
+			"time": 10,
 			"startEffect": 1
 		},
 		{
@@ -22,7 +22,7 @@
 			"url2": "https://storage.googleapis.com/gtv-videos-bucket/sample/images/SubaruOutbackOnStreetAndDirt.jpg",
 			"url3": "https://storage.googleapis.com/gtv-videos-bucket/sample/images/Sintel.jpg",
 			"index": 3,
-			"time": 3,
+			"time": 5,
 			"startEffect": 1
 		},
 		{
@@ -31,7 +31,7 @@
 			"url2": "https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerMeltdowns.jpg",
 			"url3": "https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerJoyrides.jpg",
 			"index": 4,
-			"time": 3,
+			"time": 5,
 			"startEffect": 1
 		},
 		{
@@ -40,7 +40,7 @@
 			"url2": "https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg",
 			"url3": "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
 			"index": 5,
-			"time": 3,
+			"time": 5,
 			"startEffect": 1
 		}
 	]

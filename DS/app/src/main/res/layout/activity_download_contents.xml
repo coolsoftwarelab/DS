@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
-            android:text="송출할 광고 다운로드 중"
+            android:text="송출할 광고 다운로드"
             android:textSize="30dp" />
 
         <ProgressBar
