@@ -123,34 +123,41 @@ class AdMainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             val service = ServerRepository.getServerInterface()
-            val response = service.reqServerAdInfo(App.uuid, "N")
-
-            withContext(Dispatchers.Main) {
-                if (response.isSuccessful) {
-                    val adInfo: AdInfoDto? = response.body()
-                    Log.d("JDEBUG", "polling adInfo?.state : ${adInfo?.state}")
-                    when (adInfo?.state) {
-                        RANT_WAIT -> {
-                            // 기기 반납되면 rantWait 상태가 됨
-                            val intent =
-                                Intent(this@AdMainActivity, DeviceAuthActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }
-                        WAIT, AD_WAIT -> {}
-                        AD_RUNNING -> {
-                            // 광고 송출중. 인증번호로 서버에 렌트기기등록 성공하면 adWait 상태
-                            if (App.activityState == App.ActivityState.FOREGROUND) {
-                                handler.postDelayed(pollingTask, App.serverPollingDelay)
+            kotlin.runCatching {
+                service.reqServerAdInfo(App.uuid, "N")
+            }.onSuccess { response ->
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        val adInfo: AdInfoDto? = response.body()
+                        Log.d("JDEBUG", "polling adInfo?.state : ${adInfo?.state}")
+                        when (adInfo?.state) {
+                            RANT_WAIT -> {
+                                // 기기 반납되면 rantWait 상태가 됨
+                                val intent =
+                                    Intent(this@AdMainActivity, DeviceAuthActivity::class.java)
+                                startActivity(intent)
+                                finish()
                             }
+                            WAIT, AD_WAIT -> {}
+                            AD_RUNNING -> {
+                                // 광고 송출중. 인증번호로 서버에 렌트기기등록 성공하면 adWait 상태
+                                if (App.activityState == App.ActivityState.FOREGROUND) {
+                                    handler.postDelayed(pollingTask, App.serverPollingDelay)
+                                }
+                            }
+                            ERROR -> Utils.showSimpleAlert(this@AdMainActivity, adInfo.message)
                         }
-                        ERROR -> Utils.showSimpleAlert(this@AdMainActivity, adInfo.message)
+                    } else {
+                        val errMsg = response.message()
+                        Utils.showSimpleAlert(this@AdMainActivity, "Error : $errMsg")
                     }
-                } else {
-                    val errMsg = response.message()
-                    Utils.showSimpleAlert(this@AdMainActivity, "Error : $errMsg")
+                }
+            }.onFailure {
+                withContext(Dispatchers.Main) {
+                    Utils.showSimpleAlert(this@AdMainActivity, it.toString())
                 }
             }
+
         }
     }
 

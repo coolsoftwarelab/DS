@@ -48,13 +48,20 @@ class DeviceAuthActivity : AppCompatActivity() {
     private fun reqRentNumber() {
         CoroutineScope(Dispatchers.IO).launch {
             val service = ServerRepository.getServerInterface()
-            val response = service.reqServerAdInfo(App.uuid, "Y")
 
-            withContext(Dispatchers.Main) {
-                if (response.isSuccessful) {
-                    val adInfo: AdInfoDto? = response.body()
-                    nextPhaseByState(adInfo)
-                    binder.txtAuthNum.text = adInfo?.rentNumber
+            kotlin.runCatching {
+                service.reqServerAdInfo(App.uuid, "Y")
+            }.onSuccess { response ->
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        val adInfo: AdInfoDto? = response.body()
+                        nextPhaseByState(adInfo)
+                        binder.txtAuthNum.text = adInfo?.rentNumber
+                    }
+                }
+            }.onFailure {
+                withContext(Dispatchers.Main) {
+                    Utils.showSimpleAlert(this@DeviceAuthActivity, it.toString())
                 }
             }
         }
@@ -93,17 +100,26 @@ class DeviceAuthActivity : AppCompatActivity() {
         Log.d("JDEBUG", "DeviceAuthActivity pollingServerState()")
         CoroutineScope(Dispatchers.IO).launch {
             val service = ServerRepository.getServerInterface()
-            val response = service.reqServerAdInfo(App.uuid, "N")
 
-            withContext(Dispatchers.Main) {
-                if (response.isSuccessful) {
-                    val adInfo: AdInfoDto? = response.body()
-                    nextPhaseByState(adInfo)
-                } else {
-                    val errMsg = response.message()
-                    Utils.showSimpleAlert(this@DeviceAuthActivity, "Error : $errMsg")
+            kotlin.runCatching {
+                service.reqServerAdInfo(App.uuid, "N")
+            }.onSuccess { response ->
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        val adInfo: AdInfoDto? = response.body()
+                        nextPhaseByState(adInfo)
+                    } else {
+                        val errMsg = response.message()
+                        Utils.showSimpleAlert(this@DeviceAuthActivity, "Error : $errMsg")
+                    }
+                }
+
+            }.onFailure {
+                withContext(Dispatchers.Main) {
+                    Utils.showSimpleAlert(this@DeviceAuthActivity, it.toString())
                 }
             }
+
         }
     }
 

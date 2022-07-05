@@ -91,15 +91,22 @@ class IntroActivity : AppCompatActivity() {
     private fun reqServerAdInfo(uuid: String, reqRentalNumber: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val service = ServerRepository.getServerInterface()
-            val response = service.reqServerAdInfo(uuid, reqRentalNumber)
 
-            withContext(Dispatchers.Main) {
-                if (response.isSuccessful) {
-                    val adInfo: AdInfoDto? = response.body()
-                    nextPhaseByState(adInfo)
-                } else {
-                    val errMsg = response.message()
-                    Utils.showSimpleAlert(this@IntroActivity, "Error : $errMsg")
+            kotlin.runCatching {
+                service.reqServerAdInfo(uuid, reqRentalNumber)
+            }.onSuccess { response ->
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        val adInfo: AdInfoDto? = response.body()
+                        nextPhaseByState(adInfo)
+                    } else {
+                        val errMsg = response.message()
+                        Utils.showSimpleAlert(this@IntroActivity, "Error : $errMsg")
+                    }
+                }
+            }.onFailure {
+                withContext(Dispatchers.Main) {
+                    Utils.showSimpleAlert(this@IntroActivity, it.toString())
                 }
             }
         }
