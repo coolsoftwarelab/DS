@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:text="워커님 마이페이지 > 미션수행 메뉴에서\n수행할 미션 상세페이지로 이동 후\n광고송출 버튼을 눌러주세요."
             android:textSize="20dp"
             android:visibility="gone" />

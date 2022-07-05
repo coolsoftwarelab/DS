@@ -105,7 +105,7 @@ class AdMainActivity : AppCompatActivity() {
         try {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction
-//                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
                 .replace(R.id.fragment_container_view, fragment)
                 .commit()
             playAdIndex++
@@ -113,6 +113,7 @@ class AdMainActivity : AppCompatActivity() {
             // When fragment destroyed
             e.printStackTrace()
             Log.d("JDEBUG", "playAd IllegalStateException")
+            stopServerPolling()
             finish()
         }
     }
@@ -131,14 +132,15 @@ class AdMainActivity : AppCompatActivity() {
                         val adInfo: AdInfoDto? = response.body()
                         Log.d("JDEBUG", "polling adInfo?.state : ${adInfo?.state}")
                         when (adInfo?.state) {
-                            RANT_WAIT -> {
+                            RANT_WAIT, AD_WAIT -> {
                                 // 기기 반납되면 rantWait 상태가 됨
+                                stopServerPolling()
                                 val intent =
                                     Intent(this@AdMainActivity, DeviceAuthActivity::class.java)
                                 startActivity(intent)
                                 finish()
                             }
-                            WAIT, AD_WAIT -> {}
+                            WAIT -> {}
                             AD_RUNNING -> {
                                 // 광고 송출중. 인증번호로 서버에 렌트기기등록 성공하면 adWait 상태
                                 if (App.activityState == App.ActivityState.FOREGROUND) {
@@ -163,6 +165,7 @@ class AdMainActivity : AppCompatActivity() {
 
     private fun stopServerPolling() {
         handler.removeCallbacks(pollingTask)
+        handler.removeCallbacksAndMessages(null)
     }
 
 }
