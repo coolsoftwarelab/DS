@@ -8,7 +8,8 @@ import retrofit2.http.Path
 interface ApiService {
     //@POST("/_app/digitalSignage/device")
 
-    @POST("/_app/digitalSignage/deviceTest/{deviceUUID}/{isRentalCertifyNumber}") // dev
+//    @POST("/_app/digitalSignage/deviceTest/{deviceUUID}/{isRentalCertifyNumber}") // dev
+    @POST("/_app/digitalSignage/device/{deviceUUID}/{isRentalCertifyNumber}") // dev
     suspend fun reqServerAdInfo(
         @Path("deviceUUID") uuid: String,
         @Path("isRentalCertifyNumber") isRentalCertifyNumber: String

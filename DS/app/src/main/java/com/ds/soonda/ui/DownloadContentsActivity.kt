@@ -33,7 +33,7 @@ class DownloadContentsActivity : AppCompatActivity() {
     private val UPDATE_PROGRESSBAR = 1000
 
     private lateinit var binder: ActivityDownloadContentsBinding
-    private lateinit var downloadIdList: ArrayList<Long?>
+    private var downloadIdList: ArrayList<Long?> = ArrayList()
 
     private var downloadTotalCount = 0
     private var handler: Handler? = null
@@ -121,7 +121,8 @@ class DownloadContentsActivity : AppCompatActivity() {
             AD_RUNNING -> {
                 stopServerPolling()
                 val adJsonList = Gson().toJson(adInfo.ad)
-                val adList = Gson().fromJson<List<Ad>>(adJsonList, object : TypeToken<List<Ad>>() {}.type)
+                val adList =
+                    Gson().fromJson<List<Ad>>(adJsonList, object : TypeToken<List<Ad>>() {}.type)
                 AdSequenceManager.getInstance().setAdList(adList as ArrayList<Ad>)
                 startActivity(Intent(this, AdMainActivity::class.java))
                 finish()
@@ -151,16 +152,23 @@ class DownloadContentsActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             val service = ServerRepository.getServerInterface()
-            val response = service.reqServerAdInfo(App.uuid, "N")
 
-            withContext(Dispatchers.Main) {
-                if (response.isSuccessful) {
-                    val adInfo: AdInfoDto? = response.body()
-                    nextPhaseByState(adInfo)
-                } else {
-                    val errMsg = response.message()
-                    Utils.showSimpleAlert(this@DownloadContentsActivity, "Error : $errMsg")
-                    stopServerPolling()
+            kotlin.runCatching {
+                service.reqServerAdInfo(App.uuid, "N")
+            }.onSuccess { response ->
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        val adInfo: AdInfoDto? = response.body()
+                        nextPhaseByState(adInfo)
+                    } else {
+                        val errMsg = response.message()
+                        Utils.showSimpleAlert(this@DownloadContentsActivity, "Error : $errMsg")
+                        stopServerPolling()
+                    }
+                }
+            }.onFailure {
+                withContext(Dispatchers.Main) {
+                    Utils.showSimpleAlert(this@DownloadContentsActivity, it.toString())
                 }
             }
         }
@@ -183,11 +191,6 @@ class DownloadContentsActivity : AppCompatActivity() {
 
                 // Download complete all
                 if (downloadIdList.size == 0) {
-                    Toast.makeText(
-                        this@DownloadContentsActivity,
-                        "Download complete",
-                        Toast.LENGTH_SHORT
-                    ).show()
                     binder.txtDownload.text = "다운로드 완료!"
                     binder.txtNextStep.visibility = View.VISIBLE
                     binder.downloadProgress.visibility = View.GONE
