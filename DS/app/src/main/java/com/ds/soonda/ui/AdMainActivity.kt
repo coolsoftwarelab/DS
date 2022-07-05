@@ -105,7 +105,7 @@ class AdMainActivity : AppCompatActivity() {
         try {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             fragmentTransaction
-                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+//                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
                 .replace(R.id.fragment_container_view, fragment)
                 .commit()
             playAdIndex++
